@@ -15,7 +15,7 @@ open MyPlanner.Shared.Msg
 
 #if DEBUG
 let publicPath =
-    Path.GetFullPath "../MyPlanner.Client/public"
+    Path.GetFullPath "../MyPlanner.Client/deploy"
 #else
 let publicPath = Path.GetFullPath "./clientFiles"
 #endif

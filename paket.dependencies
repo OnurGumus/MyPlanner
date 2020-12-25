@@ -1,3 +1,4 @@
+
 source https://api.nuget.org/v3/index.json
 
 storage: none
@@ -10,3 +11,14 @@ nuget SeriLog
 nuget Destructurama.FSharp prerelease
 nuget Serilog.Sinks.Console
 nuget Serilog.Formatting.Compact
+
+group Build
+    source https://api.nuget.org/v3/index.json
+    framework: netstandard2.0 
+    storage: none
+
+    nuget FSharp.Core
+    nuget Fake.Core.ReleaseNotes prerelease
+    nuget Fake.Core.Target prerelease
+    nuget Fake.DotNet.Cli prerelease
+    nuget Fake.IO.FileSystem prerelease
