@@ -2,3 +2,11 @@ source https://api.nuget.org/v3/index.json
 
 storage: none
 framework: net5.0
+nuget FSharp.Core
+nuget Giraffe
+nuget Thoth.Json.Giraffe
+nuget Elmish.Bridge.Giraffe
+nuget SeriLog
+nuget Destructurama.FSharp prerelease
+nuget Serilog.Sinks.Console
+nuget Serilog.Formatting.Compact

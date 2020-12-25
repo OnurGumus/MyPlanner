@@ -1,0 +1,8 @@
+FSharp.Core
+Giraffe
+Thoth.Json.Giraffe
+Elmish.Bridge.Giraffe
+SeriLog
+Destructurama.FSharp
+Serilog.Sinks.Console
+Serilog.Formatting.Compact
