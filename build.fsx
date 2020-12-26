@@ -11,7 +11,7 @@ let serverPath =
     Path.getFullName "./src/MyPlanner.Server"
 
 let automationPath =
-    Path.getFullName "./tests/MyPlanner.Client.Test.Automation"
+    Path.getFullName "./tests/MyPlanner.Automation"
 
 let serverTestPath =
     Path.getFullName "./tests/MyPlanner.Test"
@@ -145,18 +145,19 @@ Target.create "Run" (fun _ ->
 
 let automation =
     fun _ ->
-        let server =
+        let server = 
             async {
                 let runTool = runTool Proc.startRawSync
 
                 runTool
                     (serverPath
-                     + "/bin/Debug/netcoreapp3.1/MyPlanner.Server")
+                     + "/bin/Debug/net5.0/MyPlanner.Server")
                     ""
                     serverPath
             }
 
-        let automation = async { runDotNet "run" automationPath }
+        let automation = async { 
+            runDotNet "run" automationPath }
         let tasks = [ server; automation ]
 
         tasks
@@ -164,10 +165,12 @@ let automation =
         |> Async.RunSynchronously
         |> ignore
 
+        
 Target.create "RunAutomation" automation
 
-
 open Fake.Core.TargetOperators
+
+"BuildServerOnly" ==> "RunAutomation"
 
 // ==> "InstallClient"
 // ==> "BuildServerOnly"

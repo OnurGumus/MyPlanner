@@ -1,4 +1,3 @@
-
 source https://api.nuget.org/v3/index.json
 
 storage: none
@@ -11,6 +10,10 @@ nuget SeriLog
 nuget Destructurama.FSharp prerelease
 nuget Serilog.Sinks.Console
 nuget Serilog.Formatting.Compact
+nuget canopy
+nuget selenium.webdriver.chromedriver
+nuget FSharp.Core
+nuget TickSpec
 
 group Build
     source https://api.nuget.org/v3/index.json
