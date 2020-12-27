@@ -11,5 +11,9 @@
     <Compile Include="Program.fs" />
     <EmbeddedResource Include="../../features/show-tasks.feature" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MyPlanner.Client\MyPlanner.Client.fsproj" />
+    <ProjectReference Include="..\..\src\MyPlanner.Server\MyPlanner.Server.fsproj" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

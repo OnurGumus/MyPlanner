@@ -1,6 +1,6 @@
 ﻿namespace MyPlanner.Query
 
-open MyPlanner.Shared.Domain
+open MyPlanner.Shared.Model
 
 type GetTasks = unit -> Task list Async
 
