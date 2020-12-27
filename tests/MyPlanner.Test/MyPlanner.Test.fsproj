@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ExpectoTickSpecHelper.fs" />
+    <Compile Include="ElmishLoop.fs" />
     <Compile Include="ShowTasks.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />

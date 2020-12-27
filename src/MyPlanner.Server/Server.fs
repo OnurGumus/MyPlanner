@@ -20,6 +20,9 @@ let publicPath =
 let publicPath = Path.GetFullPath "./clientFiles"
 #endif
 
+
+type ServerMsg =
+    | Remote of ClientToServer.Msg
 // type ElmishBridge.BridgeServer<'arg, 'model, 'server, 'client, 'impl> with
 //     member this.AddSeriLog =
 //         this.AddMsgLogging(fun m -> Log.Debug("New message: {Msg}", m))
