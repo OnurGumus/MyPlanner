@@ -12,8 +12,13 @@ nuget Serilog.Sinks.Console
 nuget Serilog.Formatting.Compact
 nuget canopy
 nuget selenium.webdriver.chromedriver
-nuget FSharp.Core
 nuget TickSpec
+nuget Expecto
+nuget YoloDev.Expecto.TestSdk
+nuget Microsoft.NET.Test.Sdk
+nuget altcover
+nuget FSCheck
+nuget Expecto.FsCheck
 
 group Build
     source https://api.nuget.org/v3/index.json

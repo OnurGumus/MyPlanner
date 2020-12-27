@@ -80,7 +80,7 @@ Target.create "InstallClient" (fun _ ->
     runTool yarnTool "--version" __SOURCE_DIRECTORY__
     runTool yarnTool "install --frozen-lockfile" __SOURCE_DIRECTORY__)
 
-Target.create "BuildServerOnly" (fun _ -> runDotNet "build" serverPath)
+Target.create "BuildServer" (fun _ -> runDotNet "build" serverPath)
 
 Target.create "BuildClient" (fun _ ->
     let runTool = runTool Proc.run
@@ -170,7 +170,7 @@ Target.create "RunAutomation" automation
 
 open Fake.Core.TargetOperators
 
-"BuildServerOnly" ==> "RunAutomation"
+"BuildServer" ==> "RunAutomation"
 
 // ==> "InstallClient"
 // ==> "BuildServerOnly"
