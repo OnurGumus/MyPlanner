@@ -94,11 +94,11 @@ Target.create "BuildServerOnlyRelease" (fun _ ->
          + deployDir)
         serverPath)
 
-Target.create "RunServerTests" (fun _ ->
+Target.create "RunTests" (fun _ ->
     runDotNet
-        "test --configuration NO_FABLE /p:AltCover=true /p:AltCoverShowSummary=YELLOW /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage \
+        "test /p:AltCover=true /p:AltCoverShowSummary=YELLOW /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage \
             /p:AltCoverForce=true /p:AltCoverLocalSource=true \
-            /p:AltCoverAssemblyFilter=\"Irma.UI.Components\" \
+            /p:AltCoverAssemblyFilter=\"\" \
             /p:AltCoverVisibleBranches=true \
             /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S60C95"
         serverTestPath)

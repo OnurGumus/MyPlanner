@@ -5,7 +5,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ExpectoTickSpecHelper.fs" />
+    <Compile Include="ShowTasks.fs" />
+    <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
+    <EmbeddedResource Include="../../features/show-tasks.feature" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
