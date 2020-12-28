@@ -5,6 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Query.fs" />
     <Compile Include="State.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />

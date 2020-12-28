@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module ElmishLoop
+module MyPlanner.Test.ElmishLoop
 
 open System.Threading
 open Elmish

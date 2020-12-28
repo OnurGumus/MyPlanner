@@ -143,30 +143,7 @@ Target.create "Run" (fun _ ->
     |> Async.RunSynchronously
     |> ignore)
 
-let automation =
-    fun _ ->
-        let server = 
-            async {
-                let runTool = runTool Proc.startRawSync
-
-                runTool
-                    (serverPath
-                     + "/bin/Debug/net5.0/MyPlanner.Server")
-                    ""
-                    serverPath
-            }
-
-        let automation = async { 
-            runDotNet "run" automationPath }
-        let tasks = [ server; automation ]
-
-        tasks
-        |> Async.Parallel
-        |> Async.RunSynchronously
-        |> ignore
-
-        
-Target.create "RunAutomation" automation
+Target.create "RunAutomation" (fun _ -> runDotNet "run" automationPath)
 
 open Fake.Core.TargetOperators
 

@@ -1,9 +1,7 @@
 module MyPlanner.Server.State
 
-open Elmish
 open Microsoft.Extensions.Configuration
-open MyPlanner.Query
-
+open Query
     
 [<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 type AppEnv(config: IConfiguration) =
@@ -18,4 +16,4 @@ type AppEnv(config: IConfiguration) =
         member _.GetSection key = config.GetSection(key)
 
     interface ITaskQuery with
-        member _.GetTasks: GetTasks =  failwith "not impl"
+        member _.GetTasks() = MyPlanner.Query.Tasks.getTasks()

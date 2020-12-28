@@ -40,7 +40,8 @@ type ServerMsg =
 
 let init dispatch () = dispatch ServerToClient.ServerConnected, Cmd.none
 
-let rec update env clientDispatch msg state = state, Cmd.none
+let rec update env clientDispatch msg state = 
+    state, Cmd.none
 
 [<Literal>]
 let Socket_Endpoint = "/socket/main"
@@ -55,18 +56,17 @@ let webApp env: HttpHandler =
         GET >=> htmlFile (publicPath + "/index.html")
     ]
 
-let root: HttpHandler =
+let root envFactory: HttpHandler  =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         let config = ctx.GetService<IConfiguration>()
 
-        let appEnv =
-            State.AppEnv(config)
+        let appEnv = envFactory config
 
         webApp appEnv next ctx
 
 
-let configureApp (app: IApplicationBuilder) =
-    app.UseDefaultFiles().UseStaticFiles().UseWebSockets().UseGiraffe root
+let configureApp envFactory (app: IApplicationBuilder) =
+    app.UseDefaultFiles().UseStaticFiles().UseWebSockets().UseGiraffe (root envFactory)
 
 let configureServices (services: IServiceCollection) =
     services.AddGiraffe() |> ignore

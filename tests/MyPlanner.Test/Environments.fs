@@ -1,3 +1,7 @@
-module Environments
+module MyPlanner.Test.Environments
+open MyPlanner.Server.Query
+open MyPlanner.Shared.Model
 
-type AppEnv() = class end
+type AppEnv() =
+    interface ITaskQuery with
+        member _.GetTasks() = async { return [Task.NA] } 

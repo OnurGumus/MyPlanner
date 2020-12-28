@@ -1,17 +1,17 @@
+module MyPlanner.Server.Program
+
 open System
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Hosting
-open Microsoft.Extensions.DependencyInjection
-open Giraffe
 open Serilog
 open Serilog.Events
 open Serilog.Formatting.Compact
 open MyPlanner.Server
 
 
-[<EntryPoint>]
-let main _ =
+let buildHost envFactory =
+    
     Log.Logger <-
         LoggerConfiguration().MinimumLevel.Debug().MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .Destructure.FSharpTypes()
@@ -21,9 +21,11 @@ let main _ =
         .CreateDefaultBuilder()
         .ConfigureWebHostDefaults(fun webBuilder ->
             webBuilder.UseWebRoot(Server.publicPath)
-                      .Configure(Action<IApplicationBuilder> Server.configureApp)
+                      .Configure(Action<IApplicationBuilder> (Server.configureApp envFactory))
                       .ConfigureServices(Server.configureServices)
             |> ignore)
         .Build()
-        .Run()
+[<EntryPoint>]
+let main _ =
+    (buildHost (fun c -> State.AppEnv(c))).Run()
     0
