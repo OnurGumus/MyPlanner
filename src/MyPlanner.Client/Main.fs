@@ -19,7 +19,7 @@ type Msg =
     | ServerDisconnected
     | Remote of ServerToClient.Msg
 
-let urlUpdate (result:Route option) (model: Model) =
+let urlUpdate (result: Route option) (model: Model) =
     match result, model.Page with
     | Some (Route.Tasks), _ -> { model with Page = Some Page.Tasks }, Cmd.none
     | _ -> failwith "invalid url"
@@ -30,7 +30,16 @@ let init (bridgeSend: ClientToServer.Msg -> unit) (page: Route option) =
         { Page = None
           ConnectionStatus = Disconnected }
 
-let update (bridgeSend: ClientToServer.Msg -> unit) newUrl toPage msg model = model, Cmd.none
+let update (bridgeSend: ClientToServer.Msg -> unit) newUrl toPage msg model =
+    match msg with
+    | Remote (ServerToClient.ServerConnected) ->
+        { model with
+              ConnectionStatus = Connected },
+        Cmd.none
+    | ServerDisconnected ->
+        { model with
+              ConnectionStatus = Disconnected },
+        Cmd.none
 
 
 let mapClientMsg msg =

@@ -4,5 +4,5 @@ open Expecto
 open ExpectoTickSpecHelper
 
 [<Tests>]
-let _ = featureTest "show-tasks.feature"
+let show_tasks = featureTest "show-tasks.feature"
 

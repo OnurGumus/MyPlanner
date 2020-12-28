@@ -11,7 +11,7 @@ let run initPage
         clientModel
         (clientDispatcher: ref<Dispatch<Main.Msg>>)
         (newUrl: ref<Main.Route option -> unit>)
-        (appEnv: AppEnv)
+        (appEnv: Environments.AppEnv)
         =
 
     let serverDispatchQueue = ref []
@@ -32,7 +32,7 @@ let run initPage
 
         Program.mkProgram (Server.init clientDispatch) (Server.update appEnv clientDispatch) view
         |> Program.withSubscription sub
-        |> Program.withTrace (fun msg model -> printf "Msg: %A Model %A" msg model)
+        |> Program.withTrace (fun msg model -> printfn "Server-Msg: %A \nServer-Model %A" msg model)
         |> Program.run
 
     let serverModel = ref Unchecked.defaultof<unit>
@@ -80,9 +80,9 @@ let run initPage
 
         Program.mkProgram (fun () -> Main.init bridgeSend initPage) update view
         |> Program.withSubscription sub
-        |> Program.withTrace (fun msg model -> printf "Msg: %A Model %A" msg ())
+        |> Program.withTrace (fun msg model -> printfn "Client-Msg: %A \nClient-Model %A" msg model)
         |> Program.withErrorHandler (fun (er, ex) ->
-            (printf "\n*******\nError: %s\n Exception: %s" er (ex.ToString()))
+            (printfn "\n*******\nError: %s\n Exception: %s" er (ex.ToString()))
             raise ex)
         |> Program.run
 
@@ -104,15 +104,12 @@ type API =
         ClientModel: Main.Model ref
         ClientDispatcher: Dispatch<Main.Msg>
         NewUrl: Main.Route option -> unit
-        AppEnv: AppEnv
+        AppEnv: Environments.AppEnv
     }
 
 
-let runWithDefaults appEnv =
+let runWithDefaults (appEnv: Environments.AppEnv) initPage  =
     let clientModel: Main.Model ref = ref Unchecked.defaultof<_>
-
-    let initPage =
-        Some(Main.Route.Tasks)
 
     let clientDispatcher: Dispatch<Main.Msg> ref = ref Unchecked.defaultof<_>
     let newUrl: (Main.Route option -> unit) ref = ref Unchecked.defaultof<_>
