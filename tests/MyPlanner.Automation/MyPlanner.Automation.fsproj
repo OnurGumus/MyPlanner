@@ -5,9 +5,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ShowTasks.fs" />
+    <Compile Include="CreateTasks.fs" />
     <Compile Include="Program.fs" />
-    <EmbeddedResource Include="../../features/show-tasks.feature" />
+    <EmbeddedResource Include="../../features/create-tasks.feature" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyPlanner.Server\MyPlanner.Server.fsproj" />

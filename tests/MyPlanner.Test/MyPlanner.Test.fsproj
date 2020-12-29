@@ -9,10 +9,10 @@
     <Compile Include="ExpectoTickSpecHelper.fs" />
     <Compile Include="Environments.fs" />
     <Compile Include="ElmishLoop.fs" />
-    <Compile Include="ShowTasks.fs" />
+    <Compile Include="CreateTasks.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
-    <EmbeddedResource Include="../../features/show-tasks.feature" />
+    <EmbeddedResource Include="../../features/create-tasks.feature" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyPlanner.Client\MyPlanner.Client.fsproj" />

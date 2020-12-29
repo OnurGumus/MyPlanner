@@ -37,7 +37,7 @@ let main _ =
             let ass = Assembly.GetExecutingAssembly()
             let definitions = StepDefinitions(ass)
 
-            [ "show-tasks" ]
+            [ "create-tasks" ]
             |> Seq.iter
                 (fun source ->
                     let s =
