@@ -19,6 +19,13 @@ nuget Microsoft.NET.Test.Sdk
 nuget altcover
 nuget FSCheck
 nuget Expecto.FsCheck
+nuget Akka.Cluster.Sharding
+nuget Akkling
+nuget Akkling.Persistence
+nuget Akkling.Cluster.Sharding
+nuget Akka.Cluster.Tools
+nuget NodaTime
+nuget NodaTime.Serialization.JsonNet
 
 group Build
     source https://api.nuget.org/v3/index.json

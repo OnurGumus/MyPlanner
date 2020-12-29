@@ -1,0 +1,9 @@
+FSharp.Core
+Akka.Cluster.Sharding
+Akkling
+Akkling.Persistence
+Akkling.Cluster.Sharding
+Akka.Cluster.Tools
+Serilog
+NodaTime
+NodaTime.Serialization.JsonNet

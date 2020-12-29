@@ -1,6 +1,6 @@
 module MyPlanner.Server.Query
 
-open MyPlanner.Shared.Model
+open MyPlanner.Shared.Domain
 
 [<Interface>]
 type ITaskQuery =
