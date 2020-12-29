@@ -99,7 +99,6 @@ open Akkling.Persistence
 
 let mediator = DistributedPubSub.Get(system).Mediator
 
-
 let mat = ActorMaterializer.Create(system)
 
 let subscribeForCommand command =

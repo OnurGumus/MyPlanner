@@ -249,7 +249,8 @@ module SagaStarter =
             <| props (actorProp sagaCheck)
 
         typed mediator <! (sagaStarter |> untyped |> Put)
-
+        
+[<AutoOpen>]
 module CommandHandler =
 
     let (|SubscriptionAcknowledged|_|) (msg: obj) =

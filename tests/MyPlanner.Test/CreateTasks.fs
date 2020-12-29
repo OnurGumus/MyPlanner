@@ -1,15 +1,15 @@
-module MyPlanner.Test.CreateTasks
+module MyPlanner.Test.CQRS.CreateTasks
 
 open MyPlanner.Client
 open TickSpec
-
+open MyPlanner.Test
 
 [<Given>]
 let ``there are no tasks in the system`` () = ()
 
 
 [<When>]
-let ``I create a task`` () = Environments.AppEnv()
+let ``I create a task`` () = (Environments.AppEnv())
 
 
 [<Then>]

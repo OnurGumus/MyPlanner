@@ -8,6 +8,7 @@
     <Compile Include="Common.fs" />
     <Compile Include="Actor.fs" />
     <Compile Include="Domain.fs" />
+    <Compile Include="API.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyPlanner.Shared\MyPlanner.Shared.fsproj" />
