@@ -27,15 +27,7 @@ module Task =
 
     type Event = TaskCreated of Task
 
-
     let actorProp (mediator: IActorRef<Publish>) (mailbox: Eventsourced<_>) =
-        let mediatorS = retype mediator
-
-        let publish =
-            SagaStarter.publishEvent mailbox mediator
-
-        let sendToSagaStarter =
-            SagaStarter.toSendMessage mediatorS mailbox.Self
 
         let rec set (state: Task option * int) =
             actor {
@@ -50,7 +42,7 @@ module Task =
 
                 | Persisted mailbox (Event ({ Event = TaskCreated t; Version = v } as e)), _ ->
                     Log.Information "persisted"
-                    publish e
+                    SagaStarter.publishEvent mailbox mediator e
                     return! (Some t, v) |> set
 
                 | _ -> return Unhandled
@@ -65,12 +57,7 @@ module Task =
 
     let factory entityId = init.RefFor DEFAULT_SHARD entityId
 
-let sagaCheck (o: obj) =
-    match o with
-    | :? (Event<Task.Event>) as e ->
-        match e with
-        | _ -> []
-    | _ -> []
+let sagaCheck (o: obj) = []
 
 let init () =
     SagaStarter.init Actor.system Actor.mediator sagaCheck
