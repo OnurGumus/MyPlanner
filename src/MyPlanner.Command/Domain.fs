@@ -1,4 +1,4 @@
-﻿module MyPlanner.Command.Domain
+module MyPlanner.Command.Domain
 
 
 open Akkling
@@ -58,10 +58,25 @@ module Task =
 
         set (None, 0)
 
-
     let init =
         AkklingHelpers.entityFactoryFor Actor.system shardResolver (nameof (Task))
         <| propsPersist (actorProp (typed Actor.mediator))
         <| false
 
     let factory entityId = init.RefFor DEFAULT_SHARD entityId
+
+let sagaCheck (o: obj) =
+    match o with
+    | :? (Event<Task.Event>) as e ->
+        match e with
+        | _ -> []
+    | _ -> []
+
+let init () =
+    SagaStarter.init Actor.system Actor.mediator sagaCheck
+
+    Task.init
+    |> sprintf "Task initialized: %A"
+    |> Log.Debug
+
+    System.Threading.Thread.Sleep(1000)

@@ -7,7 +7,7 @@
     <Compile Include="AkklingHelpers.fs" />
     <Compile Include="Common.fs" />
     <Compile Include="Actor.fs" />
-    <Compile Include="Library.fs" />
+    <Compile Include="Domain.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyPlanner.Shared\MyPlanner.Shared.fsproj" />
