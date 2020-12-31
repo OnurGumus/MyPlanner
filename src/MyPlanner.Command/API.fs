@@ -5,6 +5,8 @@ open Common
 open Domain.Task
 open Serilog
 
+Domain.init()
+
 let createTask: CreateTask =
     fun task ->
         async {

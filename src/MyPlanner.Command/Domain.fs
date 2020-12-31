@@ -67,3 +67,7 @@ let init () =
     |> Log.Debug
 
     System.Threading.Thread.Sleep(1000)
+
+
+let stop () =
+    Actor.system.Terminate()

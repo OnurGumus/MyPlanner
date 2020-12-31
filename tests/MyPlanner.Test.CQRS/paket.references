@@ -3,3 +3,7 @@ Expecto
 YoloDev.Expecto.TestSdk
 Microsoft.NET.Test.Sdk
 TickSpec
+Serilog.Sinks.Console
+SeriLog
+Destructurama.FSharp
+Serilog.Formatting.Compact

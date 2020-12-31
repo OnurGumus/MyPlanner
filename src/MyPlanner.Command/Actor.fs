@@ -28,11 +28,11 @@ let configWithPort port =
                 provider = "Akka.Cluster.ClusterActorRefProvider, Akka.Cluster"
                 serializers {
                     json = "Akka.Serialization.NewtonSoftJsonSerializer"
-                    plainnewtonsoft = "Common+PlainNewtonsoftJsonSerializer, FBlazorShop"
+                    plainnewtonsoft = "Common+PlainNewtonsoftJsonSerializer, MyPlanner.Command"
                 }
                 serialization-bindings {
                     "System.Object" = json
-                    "Common+IDefaultTag, FBlazorShop" = plainnewtonsoft
+                    "Common+IDefaultTag, MyPlanner.Command" = plainnewtonsoft
                 }
             }
             remote {
