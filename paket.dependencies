@@ -23,9 +23,12 @@ nuget Akka.Cluster.Sharding
 nuget Akkling
 nuget Akkling.Persistence
 nuget Akkling.Cluster.Sharding
+nuget Akka.Persistence.Query.Sql
 nuget Akka.Cluster.Tools
 nuget NodaTime
 nuget NodaTime.Serialization.JsonNet
+nuget Akka.Persistence.Sqlite
+nuget Microsoft.Data.SQLite.Core
 
 group Build
     source https://api.nuget.org/v3/index.json

@@ -7,3 +7,5 @@ Akka.Cluster.Tools
 Serilog
 NodaTime
 NodaTime.Serialization.JsonNet
+Akka.Persistence.Sqlite
+Microsoft.Data.SQLite.Core

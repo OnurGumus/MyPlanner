@@ -1,4 +1,4 @@
-module Common
+module MyPlanner.Command.Common
 
 open System
 open Akkling

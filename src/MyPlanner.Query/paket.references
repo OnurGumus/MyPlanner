@@ -1,1 +1,8 @@
 FSharp.Core
+Akkling.Persistence
+Serilog
+Akka.Persistence.Query.Sql
+NodaTime
+NodaTime.Serialization.JsonNet
+Akka.Persistence.Sqlite
+Microsoft.Data.SQLite.Core

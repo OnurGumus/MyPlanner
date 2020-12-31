@@ -4,10 +4,12 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Projection.fs" />
     <Compile Include="Tasks.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyPlanner.Shared\MyPlanner.Shared.fsproj" />
+    <ProjectReference Include="..\MyPlanner.Command\MyPlanner.Command.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
