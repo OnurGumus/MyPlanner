@@ -52,28 +52,22 @@ type PlainNewtonsoftJsonSerializer(system: ExtendedActorSystem) =
 
 
 type Command<'Command> =
-    {
-        Command: 'Command
-        CreationDate: Instant
-        CorrelationId: string
-    }
+    { Command: 'Command
+      CreationDate: Instant
+      CorrelationId: string }
 
 type Event<'Event> =
-    {
-        Event: 'Event
-        CreationDate: Instant
-        CorrelationId: string
-        Version: int
-    }
+    { Event: 'Event
+      CreationDate: Instant
+      CorrelationId: string
+      Version: int }
 
 
 let toEvent (clockInstance: IClock) ci event version =
-    {
-        Event = event
-        CreationDate = clockInstance.GetCurrentInstant()
-        CorrelationId = ci
-        Version = version
-    }
+    { Event = event
+      CreationDate = clockInstance.GetCurrentInstant()
+      CorrelationId = ci
+      Version = version }
 
 type IDefaultTag =
     interface
@@ -89,7 +83,11 @@ module SagaStarter =
         let first = name.Replace("_Saga_", "_")
         let index = first.IndexOf('_')
         let lastIndex = first.LastIndexOf('_')
-        if index <> lastIndex then first.Substring(index + 1) else first
+
+        if index <> lastIndex then
+            first.Substring(index + 1)
+        else
+            first
 
     let toOriginatorName (name: string) =
         let sagaRemoved = removeSaga name
@@ -143,8 +141,8 @@ module SagaStarter =
         if sender.Path.Name |> isSaga then
             let originatorName = sender.Path.Name |> toOriginatorName
 
-            if originatorName <> self.Path.Name
-            then mediator <! Publish(originatorName, event)
+            if originatorName <> self.Path.Name then
+                mediator <! Publish(originatorName, event)
 
         mediator <! Publish(self.Path.Name, event)
 
@@ -176,30 +174,31 @@ module SagaStarter =
                 let sender = untyped <| mailbox.Sender()
 
                 let sagas =
-                    [
-                        for (factory, prefix) in list do
-                            let saga =
-                                cid
-                                |> cidToSagaName
-                                |> fun name ->
-                                    match prefix with
-                                    | null
-                                    | "" -> name
-                                    | other -> sprintf "%s_%s" other name
-                                |> factory
+                    [ for (factory, prefix) in list do
+                        let saga =
+                            cid
+                            |> cidToSagaName
+                            |> fun name ->
+                                match prefix with
+                                | null
+                                | "" -> name
+                                | other -> sprintf "%s_%s" other name
+                            |> factory
 
-                            saga
-                            <! box (ShardRegion.StartEntity(saga.EntityId))
+                        saga
+                        <! box (ShardRegion.StartEntity(saga.EntityId))
 
-                            yield saga.EntityId
-                    ]
+                        yield saga.EntityId ]
 
                 let name = originator.Path.Name
 
                 let state =
                     match state.TryFind(name) with
                     | None -> state.Add(name, (sender, sagas))
-                    | Some (_, list) -> state.Remove(name).Add(name, (sender, list @ sagas))
+                    | Some (_, list) ->
+                        state
+                            .Remove(name)
+                            .Add(name, (sender, list @ sagas))
 
                 state
 
@@ -226,7 +225,9 @@ module SagaStarter =
                         | _ ->
                             return!
                                 set
-                                <| state.Remove(originName).Add(originName, (originator, newList))
+                                <| state
+                                    .Remove(originName)
+                                    .Add(originName, (originator, newList))
 
 
                 | Command (CheckSagas (o, originator, cid)) ->
@@ -249,7 +250,7 @@ module SagaStarter =
             <| props (actorProp sagaCheck)
 
         typed mediator <! (sagaStarter |> untyped |> Put)
-        
+
 [<AutoOpen>]
 module CommandHandler =
 
@@ -259,17 +260,13 @@ module CommandHandler =
         | _ -> None
 
     type CommandDetails<'Command, 'Event> =
-        {
-            EntityRef: IEntityRef<Message<'Command, 'Event>>
-            Cmd: Command<'Command>
-            Filter: ('Event -> bool)
-        }
+        { EntityRef: IEntityRef<Message<'Command, 'Event>>
+          Cmd: Command<'Command>
+          Filter: ('Event -> bool) }
 
     type State<'Command, 'Event> =
-        {
-            CommandDetails: CommandDetails<'Command, 'Event>
-            Sender: IActorRef
-        }
+        { CommandDetails: CommandDetails<'Command, 'Event>
+          Sender: IActorRef }
 
     type Command<'Command, 'Event> = Execute of CommandDetails<'Command, 'Event>
 
@@ -291,25 +288,22 @@ module CommandHandler =
                         let cd =
                             match s with
                             | Execute cd ->
-                                monitor mailbox sender |> ignore
-
                                 mediator
                                 <! box (Subscribe(cd.EntityRef.EntityId, untyped mailbox.Self))
 
                                 cd
 
                         return!
-                            set
-                                (Some
-                                    {
-                                        CommandDetails = cd
-                                        Sender = untyped sender
-                                    })
-                    | :? (Event<'Event>) as e when e.CorrelationId = state.Value.CommandDetails.Cmd.CorrelationId
-                                                   && state.Value.CommandDetails.Filter e.Event ->
+                            set (
+                                Some
+                                    { CommandDetails = cd
+                                      Sender = untyped sender }
+                            )
+                    | :? (Event<'Event>) as e when
+                        e.CorrelationId = state.Value.CommandDetails.Cmd.CorrelationId
+                        && state.Value.CommandDetails.Filter e.Event ->
                         state.Value.Sender.Tell e
                         return! Stop
-                    | Terminated s -> return! Stop
                     | LifecycleEvent _ -> return! Ignore
                     | _ -> return! Unhandled
                 }
