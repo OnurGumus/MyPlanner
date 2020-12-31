@@ -38,7 +38,14 @@ module Task =
 
                 | Command { Command = (CreateTask t)
                             CorrelationId = ci },
-                  (None, v) -> return! set state
+                  (None, v) ->
+                    let task =
+                        { t with Version = Version(v + 1) } |> TaskCreated
+
+                    let event = toEvent ci (task) (v + 1)
+
+                    return! event |> Event |> Persist
+
 
                 | Persisted mailbox (Event ({ Event = TaskCreated t; Version = v } as e)), _ ->
                     Log.Information "persisted"
@@ -69,5 +76,4 @@ let init () =
     System.Threading.Thread.Sleep(1000)
 
 
-let stop () =
-    Actor.system.Terminate()
+let stop () = Actor.system.Terminate()

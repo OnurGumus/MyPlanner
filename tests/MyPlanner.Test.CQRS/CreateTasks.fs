@@ -12,7 +12,7 @@ let ``there are no tasks in the system`` () = ()
 let ``I create a task`` () = 
     createTask {Id = TaskId "a"; Version =version0}
     |> Async.RunSynchronously
-    |> printf "%A"
+    |> printf "Onur: %A"
 
 
 [<Then>]

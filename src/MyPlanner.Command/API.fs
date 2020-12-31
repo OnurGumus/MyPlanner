@@ -6,11 +6,12 @@ open Domain.Task
 open Serilog
 
 Domain.init()
+open MyPlanner.Shared.Domain
 
 let createTask: CreateTask =
-    fun task ->
+    fun ({Id = TaskId taskId} as task) ->
         async {
-            let taskId = sprintf "task_%s" <| task.Id.ToString()
+            let taskId = sprintf "task_%s" <| taskId
 
             let corID = taskId |> SagaStarter.toCid
             let taskActor = factory taskId
