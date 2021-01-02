@@ -12,6 +12,7 @@ open System
 open Akka.Cluster.Tools.PublishSubscribe
 open NodaTime
 open MyPlanner.Shared.Domain
+open Actor
 
 let clockInstance: IClock = upcast SystemClock.Instance
 
@@ -57,23 +58,31 @@ module Task =
 
         set (None, 0)
 
-    let init =
-        AkklingHelpers.entityFactoryFor Actor.system shardResolver (nameof (Task))
-        <| propsPersist (actorProp (typed Actor.mediator))
+    let init (actorApi: IActor) =
+        AkklingHelpers.entityFactoryFor actorApi.System shardResolver (nameof (Task))
+        <| propsPersist (actorProp (typed actorApi.Mediator))
         <| false
 
-    let factory entityId = init.RefFor DEFAULT_SHARD entityId
+    let factory actorApi entityId =
+        (init actorApi).RefFor DEFAULT_SHARD entityId
 
 let sagaCheck (o: obj) = []
 
-let init () =
-    SagaStarter.init Actor.system Actor.mediator sagaCheck
+open Akkling.Cluster.Sharding
+
+[<Interface>]
+type IDomain =
+    abstract member ActorApi: IActor
+    abstract member TaskFactory: string -> IEntityRef<Message<Task.Command, Task.Event>>
+
+let api (actorApi: IActor) =
+    SagaStarter.init actorApi.System actorApi.Mediator sagaCheck
 
     Task.init
     |> sprintf "Task initialized: %A"
     |> Log.Debug
 
     System.Threading.Thread.Sleep(1000)
-
-
-let stop () = Actor.system.Terminate()
+    { new IDomain with
+        member _.ActorApi = actorApi
+        member _.TaskFactory entityId = Task.factory actorApi entityId }

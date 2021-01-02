@@ -5,15 +5,18 @@ open MyPlanner.Command.API
 open MyPlanner.Shared.Domain
 open System.Threading
 open MyPlanner.Query
+open System.IO
 
 [<Given>]
 let ``there are no tasks in the system`` () = 
-    Projection.init()
+    let api = MyPlanner.Command.API.api obj
+    Projection.init (api.ActorApi)
+    api
 
 
 [<When>]
-let ``I create a task`` () = 
-    createTask {Id = TaskId "a"; Version =version0}
+let ``I create a task`` (api:IAPI) = 
+    api.CreateTask {Id = TaskId "a"; Version =version0}
     |> Async.RunSynchronously
 
 
@@ -24,6 +27,6 @@ let ``the task should be created successfully`` () = ()
 let ``I visit url /tasks`` () = ()
 
 [<Then>]
-let ``I should see 1 task\(s\) listed`` () = 
+let ``I should see 1 task\(s\) listed`` (api:IAPI) = 
    Thread.Sleep 3000
-   MyPlanner.Command.Domain.stop().Wait()
+   api.ActorApi.Stop().Wait()

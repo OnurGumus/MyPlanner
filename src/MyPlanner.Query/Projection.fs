@@ -22,23 +22,24 @@ let handleEvent (envelop: EventEnvelope) =
 
 
 open Akkling.Streams
+open MyPlanner.Command.Actor
 
 
-let readJournal =
+let readJournal system =
     printfn "sql id:%A" SqlReadJournal.Identifier
     PersistenceQuery
-        .Get(Actor.system)
+        .Get(system)
         .ReadJournalFor<SqlReadJournal>(SqlReadJournal.Identifier)
 
 
-let init () =
+let init (actorApi:IActor)  =
     let source =
-        readJournal.EventsByTag("default", Offset.Sequence(0L))
+        (readJournal actorApi.System) .EventsByTag("default", Offset.Sequence(0L))
 
     System.Threading.Thread.Sleep(100)
 
     source
-    |> Source.runForEach Actor.mat handleEvent
+    |> Source.runForEach actorApi.Materializer handleEvent
     |> Async.StartAsTask
     |> ignore
     System.Threading.Thread.Sleep(1000)

@@ -29,6 +29,8 @@ nuget NodaTime
 nuget NodaTime.Serialization.JsonNet
 nuget Akka.Persistence.Sqlite
 nuget Microsoft.Data.SQLite.Core
+nuget Microsoft.EntityFrameworkCore
+nuget Microsoft.EntityFrameworkCore.Sqlite
 
 group Build
     source https://api.nuget.org/v3/index.json

@@ -9,8 +9,8 @@ open System
 
 let configWithPort port =
     let config =
-        Configuration.parse
-            ("""
+        Configuration.parse (
+            """
         akka {
             persistence{
                 query.journal.sql {
@@ -45,7 +45,7 @@ let configWithPort port =
                 plugin = "akka.persistence.snapshot-store.sqlite"
                 sqlite {
                     auto-initialize = on
-                    connection-string = "Data Source=test.db"
+                    connection-string = "Data Source=InMemorySample;Mode=Memory;Cache=Shared"
                 }
               }
             }
@@ -77,8 +77,8 @@ let configWithPort port =
                     public-hostname = "localhost"
                     hostname = "localhost"
                     port = """
-             + port.ToString()
-             + """
+            + port.ToString()
+            + """
                 }
             }
             cluster {
@@ -88,9 +88,10 @@ let configWithPort port =
 
             }
         }
-        """)
+        """
+        )
 
-    config.WithFallback(ClusterSingletonManager.DefaultConfig())
+    config
 
 
 let defaultTag = ImmutableHashSet.Create("default")
@@ -98,29 +99,47 @@ let defaultTag = ImmutableHashSet.Create("default")
 type Tagger =
     interface IWriteEventAdapter with
         member _.Manifest _ = ""
-        member _.ToJournal evt = 
-            box <| Tagged(evt, defaultTag)
+        member _.ToJournal evt = box <| Tagged(evt, defaultTag)
 
     new() = {  }
 
-let system =
-    System.create "cluster-system" (configWithPort 0)
+
 
 open Akka.Cluster
 
-Cluster.Get(system).SelfAddress
-|> Cluster.Get(system).Join
 
 open Akka.Cluster.Tools.PublishSubscribe
 open Akkling.Persistence
 open Akka.Persistence.Sqlite
+open Akka.Actor
 
-let mediator = DistributedPubSub.Get(system).Mediator
+[<Interface>]
+type IActor =
+    abstract member Mediator: Akka.Actor.IActorRef
+    abstract member Materializer: ActorMaterializer
+    abstract member System: ActorSystem
+    abstract member SubscribeForCommand: Common.CommandHandler.Command<'a, 'b> -> Async<Common.Event<'b>>
+    abstract member Stop: unit -> System.Threading.Tasks.Task
 
-let mat = ActorMaterializer.Create(system)
 
+let api config =
+    let system =
+        System.create "cluster-system" (configWithPort 0)
 
-SqlitePersistence.Get(system) |> ignore
+    SqlitePersistence.Get(system) |> ignore
 
-let subscribeForCommand command =
-    Common.CommandHandler.subscribeForCommand system (typed mediator) command
+    Cluster.Get(system).SelfAddress
+    |> Cluster.Get(system).Join
+
+    let mediator = DistributedPubSub.Get(system).Mediator
+
+    let mat = ActorMaterializer.Create(system)
+
+    let subscribeForCommand command =
+        Common.CommandHandler.subscribeForCommand system (typed mediator) command
+    { new IActor with
+        member _.Mediator = mediator
+        member _.Materializer = mat
+        member _.System = system
+        member _.SubscribeForCommand command = subscribeForCommand command
+        member _.Stop() = system.Terminate() }
