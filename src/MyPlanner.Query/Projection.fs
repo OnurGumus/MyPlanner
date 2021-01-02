@@ -5,19 +5,98 @@ open Akka.Persistence.Query
 open Akka.Persistence.Query.Sql
 open Common
 open Serilog
-open Domain
+open MyPlanner
+open MyPlanner.Shared.Domain
+open FSharp.Data.Sql
+open FSharp.Data.Sql.Common
 
+[<Literal>]
+#if _VS
+let arc = @"x86/"
+#else
+let arc = @"x64/"
+#endif
+
+[<Literal>]
+let resolutionPath =
+    __SOURCE_DIRECTORY__ + @"/../sqlite_" + arc
+
+[<Literal>]
+let connectionString =
+    @"Data Source="
+    + __SOURCE_DIRECTORY__
+    + @"/../MyPlanner.db;"
+
+type Sql =
+    SqlDataProvider<Common.DatabaseProviderTypes.SQLITE, SQLiteLibrary=Common.SQLiteLibrary.MicrosoftDataSqlite, ConnectionString=connectionString, ResolutionPath=resolutionPath, CaseSensitivityChange=Common.CaseSensitivityChange.ORIGINAL>
+
+
+let ctx =
+    Sql.GetDataContext("Data Source=InMemorySample;Mode=Memory;Cache=Shared")
+
+let createTables () =
+    let conn  = ctx.CreateConnection()
+    conn.Open()
+    try
+        let cmd = conn.CreateCommand()
+        let offsets = "CREATE TABLE Offsets (
+            OffsetName	TEXT,
+            OffsetCount	INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY(OffsetName)
+        );"
+        cmd.CommandText <- offsets
+        cmd.ExecuteNonQuery() |> ignore
+        let tasks = 
+            "CREATE TABLE Tasks (
+                Id TEXT NOT NULL, Version INTEGER NOT NULL,
+                CONSTRAINT Tasks_PK PRIMARY KEY (Id)
+            )"
+        cmd.CommandText <- tasks
+        cmd.ExecuteNonQuery() |> ignore
+        let offset = ctx.Main.Offsets.``Create(OffsetCount)`` 0L
+        offset.OffsetName <- "Tasks"
+        ctx.SubmitUpdates()
+
+        let list = "SELECT 
+            count(*)
+        FROM 
+        sqlite_master
+        WHERE 
+            type ='table' AND 
+            name NOT LIKE 'sqlite_%'"
+        cmd.CommandText <- list
+        let count : int64 = cmd.ExecuteScalar() :?> _
+        printf "%A count" count
+        conn
+    with ex -> 
+        printf "%A" ex
+        conn
+    
+
+QueryEvents.SqlQueryEvent
+|> Event.add (fun sql -> Log.Debug("Executing SQL: {SQL}", sql))
 
 let handleEvent (envelop: EventEnvelope) =
     Log.Information("Handle event {@Envelope}", envelop)
-
+   
     try
         match envelop.Event with
-        | :? Message<Task.Command, Task.Event> as task -> Serilog.Log.Information(sprintf "Task is %A" task)
+        | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
+            match taskEvent with
+            | Event ({ Event = Command.Domain.Task.TaskCreated task }) ->
+                let (Version v) = task.Version
+                let (TaskId tid) = task.Id
+
+                let row = ctx.Main.Tasks.Create(v)
+
+                row.Id <- tid
+            | _ -> ()
         | _ -> ()
 
-    with e -> printf "%A" e
+        ctx.Main.Offsets.Individuals.Tasks.OffsetCount <- (envelop.Offset :?> Sequence).Value
+        ctx.SubmitUpdates()
 
+    with e -> printf "%A" e
 
 
 open Akkling.Streams
@@ -40,7 +119,7 @@ let init (actorApi: IActor) =
     System.Threading.Thread.Sleep(100)
 
     source
-    |> Source.runForEach actorApi.Materializer handleEvent
+    |> Source.runForEach actorApi.Materializer (handleEvent)
     |> Async.StartAsTask
     |> ignore
 

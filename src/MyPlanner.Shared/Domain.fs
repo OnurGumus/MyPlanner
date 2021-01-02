@@ -1,8 +1,8 @@
 ﻿module MyPlanner.Shared.Domain
 
-type Version = Version of int
+type Version = Version of int64
 
-let version0 = Version 0
+let version0 = Version 0L
 
 type TaskId = TaskId of string
 

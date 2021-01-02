@@ -6,5 +6,5 @@ NodaTime
 NodaTime.Serialization.JsonNet
 Akka.Persistence.Sqlite
 Microsoft.Data.SQLite.Core
-Microsoft.EntityFrameworkCore
-Microsoft.EntityFrameworkCore.Sqlite
+SQLProvider
+SQLitePCLRaw.core

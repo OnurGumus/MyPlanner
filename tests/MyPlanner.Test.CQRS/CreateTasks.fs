@@ -34,7 +34,7 @@ let config =
               plugin = "akka.persistence.journal.sqlite"
               sqlite
               {
-                  connection-string = "Data Source=test.db;"
+                  connection-string = "Data Source=InMemorySample;Mode=Memory;Cache=Shared;"
                   auto-initialize = on
                   event-adapters.tagger = "MyPlanner.Command.Actor+Tagger, MyPlanner.Command"
                   event-adapter-bindings {
@@ -92,11 +92,12 @@ let config =
 
 [<Given>]
 let ``there are no tasks in the system`` () =
+    let conn = MyPlanner.Query.Projection.createTables()
     let api =
         MyPlanner.Command.API.api config NodaTime.SystemClock.Instance
 
     Projection.init (api.ActorApi)
-    api
+    conn,api
 
 
 [<When>]

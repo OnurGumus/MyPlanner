@@ -60,7 +60,7 @@ type Event<'Event> =
     { Event: 'Event
       CreationDate: Instant
       CorrelationId: string
-      Version: int }
+      Version: int64 }
 
 
 let toEvent (clockInstance: IClock) ci event version =

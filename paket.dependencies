@@ -28,10 +28,10 @@ nuget Akka.Cluster.Tools
 nuget NodaTime
 nuget NodaTime.Serialization.JsonNet
 nuget Akka.Persistence.Sqlite
-nuget Microsoft.Data.SQLite.Core
-nuget Microsoft.EntityFrameworkCore
-nuget Microsoft.EntityFrameworkCore.Sqlite
-
+nuget Microsoft.Data.SQLite.Core 
+nuget SQLProvider 
+nuget SQLitePCLRaw.core 
+ 
 group Build
     source https://api.nuget.org/v3/index.json
     framework: netstandard2.0 

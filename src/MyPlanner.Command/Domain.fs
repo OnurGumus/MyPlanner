@@ -27,7 +27,7 @@ module Task =
 
     let actorProp toEvent (mediator: IActorRef<Publish>) (mailbox: Eventsourced<_>) =
 
-        let rec set (state: Task option * int) =
+        let rec set (state: Task option * int64) =
             actor {
                 let! msg = mailbox.Receive()
                 Log.Debug("Message {@MSG}", box msg)
@@ -38,9 +38,9 @@ module Task =
                             CorrelationId = ci },
                   (None, v) ->
                     let task =
-                        { t with Version = Version(v + 1) } |> TaskCreated
+                        { t with Version = Version(v + 1L) } |> TaskCreated
 
-                    let event = toEvent ci (task) (v + 1)
+                    let event = toEvent ci (task) (v + 1L)
 
                     return! event |> Event |> Persist
 
@@ -52,7 +52,7 @@ module Task =
                 | _ -> return Unhandled
             }
 
-        set (None, 0)
+        set (None, 0L)
 
     let init toEvent (actorApi: IActor) =
         AkklingHelpers.entityFactoryFor actorApi.System shardResolver (nameof (Task))

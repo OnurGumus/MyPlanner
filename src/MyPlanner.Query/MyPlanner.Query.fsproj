@@ -4,8 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Projection.fs" />
     <Compile Include="Tasks.fs" />
+    <Compile Include="Projection.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyPlanner.Shared\MyPlanner.Shared.fsproj" />
