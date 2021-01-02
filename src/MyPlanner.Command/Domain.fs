@@ -14,21 +14,18 @@ open NodaTime
 open MyPlanner.Shared.Domain
 open Actor
 
-let clockInstance: IClock = upcast SystemClock.Instance
 
 [<Literal>]
 let DEFAULT_SHARD = "default-shard"
 
 let shardResolver = fun _ -> DEFAULT_SHARD
 
-let toEvent ci = Common.toEvent clockInstance ci
-
 module Task =
     type Command = CreateTask of Task
 
     type Event = TaskCreated of Task
 
-    let actorProp (mediator: IActorRef<Publish>) (mailbox: Eventsourced<_>) =
+    let actorProp toEvent (mediator: IActorRef<Publish>) (mailbox: Eventsourced<_>) =
 
         let rec set (state: Task option * int) =
             actor {
@@ -47,7 +44,6 @@ module Task =
 
                     return! event |> Event |> Persist
 
-
                 | Persisted mailbox (Event ({ Event = TaskCreated t; Version = v } as e)), _ ->
                     Log.Information "persisted"
                     SagaStarter.publishEvent mailbox mediator e
@@ -58,13 +54,13 @@ module Task =
 
         set (None, 0)
 
-    let init (actorApi: IActor) =
+    let init toEvent (actorApi: IActor) =
         AkklingHelpers.entityFactoryFor actorApi.System shardResolver (nameof (Task))
-        <| propsPersist (actorProp (typed actorApi.Mediator))
+        <| propsPersist (actorProp toEvent (typed actorApi.Mediator))
         <| false
 
-    let factory actorApi entityId =
-        (init actorApi).RefFor DEFAULT_SHARD entityId
+    let factory toEvent actorApi entityId =
+        (init toEvent actorApi).RefFor DEFAULT_SHARD entityId
 
 let sagaCheck (o: obj) = []
 
@@ -72,10 +68,14 @@ open Akkling.Cluster.Sharding
 
 [<Interface>]
 type IDomain =
-    abstract member ActorApi: IActor
-    abstract member TaskFactory: string -> IEntityRef<Message<Task.Command, Task.Event>>
+    abstract ActorApi: IActor
+    abstract Clock: IClock
+    abstract TaskFactory: string -> IEntityRef<Message<Task.Command, Task.Event>>
 
-let api (actorApi: IActor) =
+
+let api (clock: IClock) (actorApi: IActor) =
+
+    let toEvent ci = Common.toEvent clock ci
     SagaStarter.init actorApi.System actorApi.Mediator sagaCheck
 
     Task.init
@@ -83,6 +83,8 @@ let api (actorApi: IActor) =
     |> Log.Debug
 
     System.Threading.Thread.Sleep(1000)
+
     { new IDomain with
+        member _.Clock = clock
         member _.ActorApi = actorApi
-        member _.TaskFactory entityId = Task.factory actorApi entityId }
+        member _.TaskFactory entityId = Task.factory toEvent actorApi entityId }

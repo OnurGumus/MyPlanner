@@ -84,10 +84,7 @@ module SagaStarter =
         let index = first.IndexOf('_')
         let lastIndex = first.LastIndexOf('_')
 
-        if index <> lastIndex then
-            first.Substring(index + 1)
-        else
-            first
+        if index <> lastIndex then first.Substring(index + 1) else first
 
     let toOriginatorName (name: string) =
         let sagaRemoved = removeSaga name
@@ -141,8 +138,8 @@ module SagaStarter =
         if sender.Path.Name |> isSaga then
             let originatorName = sender.Path.Name |> toOriginatorName
 
-            if originatorName <> self.Path.Name then
-                mediator <! Publish(originatorName, event)
+            if originatorName <> self.Path.Name
+            then mediator <! Publish(originatorName, event)
 
         mediator <! Publish(self.Path.Name, event)
 
@@ -299,9 +296,8 @@ module CommandHandler =
                                     { CommandDetails = cd
                                       Sender = untyped sender }
                             )
-                    | :? (Event<'Event>) as e when
-                        e.CorrelationId = state.Value.CommandDetails.Cmd.CorrelationId
-                        && state.Value.CommandDetails.Filter e.Event ->
+                    | :? (Event<'Event>) as e when e.CorrelationId = state.Value.CommandDetails.Cmd.CorrelationId
+                                                   && state.Value.CommandDetails.Filter e.Event ->
                         state.Value.Sender.Tell e
                         return! Stop
                     | LifecycleEvent _ -> return! Ignore

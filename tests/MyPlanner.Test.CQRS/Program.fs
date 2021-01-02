@@ -8,9 +8,12 @@ open Serilog.Formatting.Compact
 [<EntryPoint>]
 let main args =
     Log.Logger <-
-        LoggerConfiguration().MinimumLevel.Debug()
+        LoggerConfiguration()
+            .MinimumLevel.Debug()
             .Destructure.FSharpTypes()
-            .WriteTo.Console(RenderedCompactJsonFormatter()).Enrich.FromLogContext().CreateLogger()
+            .WriteTo.Console(RenderedCompactJsonFormatter())
+            .Enrich.FromLogContext()
+            .CreateLogger()
 
     runTestsInAssemblyWithCLIArgs [] [|
         "--sequenced"

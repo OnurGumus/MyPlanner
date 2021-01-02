@@ -6,7 +6,7 @@ let version0 = Version 0
 
 type TaskId = TaskId of string
 
-type Task = { Id: TaskId ; Version: Version }
+type Task = { Id: TaskId; Version: Version }
 
-module Command = 
-    type  CreateTask = Task -> Result<Task,string> Async
+module Command =
+    type CreateTask = Task -> Result<Task, string> Async

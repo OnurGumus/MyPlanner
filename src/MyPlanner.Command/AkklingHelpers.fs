@@ -53,8 +53,7 @@ type FunPersistentShardingActor<'Message>(actor: Eventsourced<'Message> -> Effec
 let internal adjustPersistentProps (props: Props<'Message>): Props<'Message> =
     if props.ActorType = typeof<FunPersistentActor<'Message>> then
         { props with
-            ActorType = typeof<FunPersistentShardingActor<'Message>>
-        }
+              ActorType = typeof<FunPersistentShardingActor<'Message>> }
     else
         props
 
@@ -71,20 +70,22 @@ let entityFactoryFor (system: ActorSystem)
 
     let shardSettings =
         match rememberEntities with
-        | true -> ClusterShardingSettings.Create(system).WithRememberEntities(true)
+        | true ->
+            ClusterShardingSettings
+                .Create(system)
+                .WithRememberEntities(true)
         | _ -> ClusterShardingSettings.Create(system)
 
     let shardRegion =
-        clusterSharding.Start
-            (name,
-             adjustedProps.ToProps(),
-             shardSettings,
-             new TypedMessageExtractor<_, _>(EntityRefs.entityRefExtractor, shardResolver))
+        clusterSharding.Start(
+            name,
+            adjustedProps.ToProps(),
+            shardSettings,
+            new TypedMessageExtractor<_, _>(EntityRefs.entityRefExtractor, shardResolver)
+        )
 
-    {
-        ShardRegion = shardRegion
-        TypeName = name
-    }
+    { ShardRegion = shardRegion
+      TypeName = name }
 
 let (|Recovering|_|) (context: Eventsourced<'Message>) (msg: 'Message): 'Message option =
     if context.IsRecovering() then Some msg else None

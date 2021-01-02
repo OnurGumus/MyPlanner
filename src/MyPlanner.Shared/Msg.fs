@@ -1,8 +1,7 @@
 module MyPlanner.Shared.Msg
 
 module ServerToClient =
-    type Msg =
-         ServerConnected
+    type Msg = ServerConnected
 
 
 module ClientToServer =

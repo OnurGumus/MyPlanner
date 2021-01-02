@@ -6,7 +6,7 @@ open canopy.classic
 open canopy.configuration
 open canopy.types
 
-    
+
 [<BeforeScenarioAttribute>]
 let startBrowser () =
     chromiumDir <- System.AppContext.BaseDirectory
@@ -31,9 +31,10 @@ let quitBrowser () = quit ()
 let main _ =
     try
         do
-            use host = (MyPlanner.Server.Program.buildHost (fun _ -> MyPlanner.Test.Environments.AppEnv()))
-            host.StartAsync(Unchecked.defaultof<_>)
-                |>ignore
+            use host =
+                (MyPlanner.Server.Program.buildHost (fun _ -> MyPlanner.Test.Environments.AppEnv()))
+
+            host.StartAsync(Unchecked.defaultof<_>) |> ignore
             let ass = Assembly.GetExecutingAssembly()
             let definitions = StepDefinitions(ass)
 

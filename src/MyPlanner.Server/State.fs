@@ -2,7 +2,7 @@ module MyPlanner.Server.State
 
 open Microsoft.Extensions.Configuration
 open Query
-    
+
 [<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 type AppEnv(config: IConfiguration) =
 
@@ -16,4 +16,4 @@ type AppEnv(config: IConfiguration) =
         member _.GetSection key = config.GetSection(key)
 
     interface ITaskQuery with
-        member _.GetTasks() = MyPlanner.Query.Tasks.getTasks()
+        member _.GetTasks() = MyPlanner.Query.Tasks.getTasks ()

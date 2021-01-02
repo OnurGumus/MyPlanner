@@ -24,11 +24,12 @@ let run initPage
         let view model _ = serverModel := model
 
         let sub m =
-            Cmd.ofSub (fun d ->
-                dispatcher := d
-                serverModel := m
-                //release the buffered messages
-                !serverDispatchQueue |> List.iter !dispatcher)
+            Cmd.ofSub
+                (fun d ->
+                    dispatcher := d
+                    serverModel := m
+                    //release the buffered messages
+                    !serverDispatchQueue |> List.iter !dispatcher)
 
         Program.mkProgram (Server.init clientDispatch) (Server.update appEnv clientDispatch) view
         |> Program.withSubscription sub
@@ -40,33 +41,36 @@ let run initPage
     //add messages to buffer. This implementation will be replaced by a proper dispatcher
     // once sub is invoked.
     let serverDispatcher =
-        ref (fun m ->
+        ref
+            (fun m ->
                 serverDispatchQueue
-                := !serverDispatchQueue
-                @ [ m ])
+                := !serverDispatchQueue @ [ m ])
 
     let runClientLoop bridgeSend clientModel (dispatcher: ref<Dispatch<Main.Msg>>) =
 
         let view model _ = clientModel := model
 
         let sub m =
-            Cmd.ofSub (fun d ->
-                dispatcher := d
-                clientModel := m)
+            Cmd.ofSub
+                (fun d ->
+                    dispatcher := d
+                    clientModel := m)
 
         let urlUpdate = ref None
 
         newUrl
         := fun s ->
             urlUpdate
-            := Some(fun m ->
-                let (page : Main.Route option) = s
-                Main.urlUpdate page m)
+            := Some
+                (fun m ->
+                    let (page: Main.Route option) = s
+                    Main.urlUpdate page m)
             //trigger update by dummy msg
             ! (dispatcher) Unchecked.defaultof<Main.Msg>
 
         let update (msg: Main.Msg) (model: Main.Model): Main.Model * Cmd<Main.Msg> =
             clientModel := model
+
             match !urlUpdate with
             | Some f ->
                 urlUpdate := None
@@ -81,14 +85,14 @@ let run initPage
         Program.mkProgram (fun () -> Main.init bridgeSend initPage) update view
         |> Program.withSubscription sub
         |> Program.withTrace (fun msg model -> printfn "Client-Msg: %A \nClient-Model %A" msg model)
-        |> Program.withErrorHandler (fun (er, ex) ->
-            (printfn "\n*******\nError: %s\n Exception: %s" er (ex.ToString()))
-            raise ex)
+        |> Program.withErrorHandler
+            (fun (er, ex) ->
+                (printfn "\n*******\nError: %s\n Exception: %s" er (ex.ToString()))
+                raise ex)
         |> Program.run
 
     let bridgeSend remoteMsg =
-            Server.Remote remoteMsg
-            |> !serverDispatcher
+        Server.Remote remoteMsg |> !serverDispatcher
 
     runClientLoop bridgeSend clientModel clientDispatcher
     runServerLoop serverModel serverDispatcher
@@ -100,23 +104,20 @@ let dispatchHelper clientDispatcher parent msg =
     Thread.Sleep 500
 
 type API =
-    {
-        ClientModel: Main.Model ref
-        ClientDispatcher: Dispatch<Main.Msg>
-        NewUrl: Main.Route option -> unit
-        AppEnv: Environments.AppEnv
-    }
+    { ClientModel: Main.Model ref
+      ClientDispatcher: Dispatch<Main.Msg>
+      NewUrl: Main.Route option -> unit
+      AppEnv: Environments.AppEnv }
 
 
-let runWithDefaults (appEnv: Environments.AppEnv) initPage  =
+let runWithDefaults (appEnv: Environments.AppEnv) initPage =
     let clientModel: Main.Model ref = ref Unchecked.defaultof<_>
 
     let clientDispatcher: Dispatch<Main.Msg> ref = ref Unchecked.defaultof<_>
     let newUrl: (Main.Route option -> unit) ref = ref Unchecked.defaultof<_>
     run initPage clientModel clientDispatcher newUrl appEnv
-    {
-        ClientModel = clientModel
-        ClientDispatcher = !clientDispatcher
-        NewUrl = !newUrl
-        AppEnv = appEnv
-    }
+
+    { ClientModel = clientModel
+      ClientDispatcher = !clientDispatcher
+      NewUrl = !newUrl
+      AppEnv = appEnv }

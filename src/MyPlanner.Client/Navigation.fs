@@ -1,5 +1,4 @@
 module MyPlanner.Client.Navigation
 
 
-type Page =
-    | Tasks
+type Page = | Tasks

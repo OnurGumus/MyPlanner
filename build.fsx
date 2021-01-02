@@ -72,76 +72,88 @@ let openBrowser url =
 
 Target.create "Clean" (fun _ -> [ deployDir; clientDeployPath ] |> Shell.cleanDirs)
 
-Target.create "InstallClient" (fun _ ->
-    let runTool = runTool Proc.run
-    printfn "Node version:"
-    runTool nodeTool "--version" __SOURCE_DIRECTORY__
-    printfn "Yarn version:"
-    runTool yarnTool "--version" __SOURCE_DIRECTORY__
-    runTool yarnTool "install --frozen-lockfile" __SOURCE_DIRECTORY__)
+Target.create
+    "InstallClient"
+    (fun _ ->
+        let runTool = runTool Proc.run
+        printfn "Node version:"
+        runTool nodeTool "--version" __SOURCE_DIRECTORY__
+        printfn "Yarn version:"
+        runTool yarnTool "--version" __SOURCE_DIRECTORY__
+        runTool yarnTool "install --frozen-lockfile" __SOURCE_DIRECTORY__)
 
 Target.create "BuildServer" (fun _ -> runDotNet "build" serverPath)
 
-Target.create "BuildClient" (fun _ ->
-    let runTool = runTool Proc.run
-    runTool yarnTool ("webpack-cli -p --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__)
+Target.create
+    "BuildClient"
+    (fun _ ->
+        let runTool = runTool Proc.run
+        runTool yarnTool ("webpack-cli -p --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__)
 
-Target.create "BuildServerOnlyRelease" (fun _ ->
-    Shell.cleanDir deployDir
+Target.create
+    "BuildServerOnlyRelease"
+    (fun _ ->
+        Shell.cleanDir deployDir
 
-    runDotNet
-        ("publish --configuration release --output "
-         + deployDir)
-        serverPath)
+        runDotNet
+            ("publish --configuration release --output "
+             + deployDir)
+            serverPath)
 
-Target.create "RunTests" (fun _ ->
-    runDotNet
-        "test /p:AltCover=true /p:AltCoverShowSummary=YELLOW /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage \
+Target.create
+    "RunTests"
+    (fun _ ->
+        runDotNet
+            "test /p:AltCover=true /p:AltCoverShowSummary=YELLOW /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage \
             /p:AltCoverForce=true /p:AltCoverLocalSource=true \
             /p:AltCoverAssemblyFilter=\"\" \
             /p:AltCoverVisibleBranches=true \
             /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S60C95"
-        serverTestPath)
+            serverTestPath)
 
-Target.create "BuildRelease" (fun _ ->
-    let runTool = runTool Proc.run
-    runTool yarnTool ("webpack-cli -p --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
-    printf "source: %A target:%A" clientDeployPath clientDeployReleasePath
-    Shell.copyDir clientDeployReleasePath clientDeployPath (fun _ -> true))
+Target.create
+    "BuildRelease"
+    (fun _ ->
+        let runTool = runTool Proc.run
+        runTool yarnTool ("webpack-cli -p --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
+        printf "source: %A target:%A" clientDeployPath clientDeployReleasePath
+        Shell.copyDir clientDeployReleasePath clientDeployPath (fun _ -> true))
 
-Target.create "WatchServer" (fun _ -> runDotNet "watch run" serverPath) 
+Target.create "WatchServer" (fun _ -> runDotNet "watch run" serverPath)
 
-Target.create "Run" (fun _ ->
-    let server =
-        async { runDotNet "watch run" serverPath }
+Target.create
+    "Run"
+    (fun _ ->
+        let server =
+            async { runDotNet "watch run" serverPath }
 
-    let client =
-        async {
-            let runTool = runTool Proc.run
-            runTool yarnTool ("webpack-dev-server --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
-        }
+        let client =
+            async {
+                let runTool = runTool Proc.run
+                runTool yarnTool ("webpack-dev-server --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
+            }
 
-    let browser =
-        async {
-            do! Async.Sleep 5000
-            openBrowser "http://localhost:8080"
-        }
+        let browser =
+            async {
+                do! Async.Sleep 5000
+                openBrowser "http://localhost:8080"
+            }
 
-    let vsCodeSession =
-        Environment.hasEnvironVar "vsCodeSession"
-    //don't remove this comment otherwise it doesn't work, LITERALLY doesn't work! :/
-    let safeClientOnly =
-        Environment.hasEnvironVar "safeClientOnly"
+        let vsCodeSession =
+            Environment.hasEnvironVar "vsCodeSession"
+        //don't remove this comment otherwise it doesn't work, LITERALLY doesn't work! :/
+        let safeClientOnly =
+            Environment.hasEnvironVar "safeClientOnly"
 
-    let tasks =
-        [ if not safeClientOnly then yield server
-          yield client
-          if not vsCodeSession then yield browser ]
+        let tasks =
+            [ if not safeClientOnly then yield server
+              yield client
+              if not vsCodeSession then yield browser ]
 
-    tasks
-    |> Async.Parallel
-    |> Async.RunSynchronously
-    |> ignore)
+        tasks
+        |> Async.Parallel
+        |> Async.RunSynchronously
+        |> ignore)
 
 Target.create "RunAutomation" (fun _ -> runDotNet "run" automationPath)
 

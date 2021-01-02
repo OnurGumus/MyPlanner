@@ -14,13 +14,19 @@ let featureFromEmbeddedResource (resourceName: string): TickSpec.Feature =
 
 let testListFromFeature (feature: TickSpec.Feature): Expecto.Test =
     feature.Scenarios
-    |> Seq.map (fun scenario ->
-        let testCaseF =
-            if scenario.Name.Replace("Scenario:", "").Trim().StartsWith("_")
-            then ftestCase
-            else testCase
+    |> Seq.map
+        (fun scenario ->
+            let testCaseF =
+                if (scenario
+                        .Name
+                        .Replace("Scenario:", "")
+                        .Trim()
+                        .StartsWith("_")) then
+                    ftestCase
+                else
+                    testCase
 
-        testCaseF scenario.Name (fun () -> scenario.Action.Invoke())) // )
+            testCaseF scenario.Name (fun () -> scenario.Action.Invoke())) // )
     |> Seq.toList
     |> (fun tests ->
         let testListF =
@@ -33,5 +39,3 @@ let featureTest (resourceName: string) =
     (assembly.GetName().Name + "." + resourceName)
     |> featureFromEmbeddedResource
     |> testListFromFeature
-
-

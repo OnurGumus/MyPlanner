@@ -21,8 +21,7 @@ let publicPath = Path.GetFullPath "./clientFiles"
 #endif
 
 
-type ServerMsg =
-    | Remote of ClientToServer.Msg
+type ServerMsg = Remote of ClientToServer.Msg
 // type ElmishBridge.BridgeServer<'arg, 'model, 'server, 'client, 'impl> with
 //     member this.AddSeriLog =
 //         this.AddMsgLogging(fun m -> Log.Debug("New message: {Msg}", m))
@@ -38,10 +37,10 @@ type ServerMsg =
 //     |> fun program -> program.AddSeriLog
 //     |> ElmishBridge.Bridge.run Elmish.Bridge.Giraffe.server
 
-let init dispatch () = dispatch ServerToClient.ServerConnected, Cmd.none
+let init dispatch () =
+    dispatch ServerToClient.ServerConnected, Cmd.none
 
-let rec update env clientDispatch msg state = 
-    state, Cmd.none
+let rec update env clientDispatch msg state = state, Cmd.none
 
 [<Literal>]
 let Socket_Endpoint = "/socket/main"
@@ -51,12 +50,10 @@ let bridge env =
     |> Bridge.run Giraffe.server
 
 let webApp env: HttpHandler =
-    choose [
-        bridge env
-        GET >=> htmlFile (publicPath + "/index.html")
-    ]
+    choose [ bridge env
+             GET >=> htmlFile (publicPath + "/index.html") ]
 
-let root envFactory: HttpHandler  =
+let root envFactory: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         let config = ctx.GetService<IConfiguration>()
 
@@ -66,7 +63,11 @@ let root envFactory: HttpHandler  =
 
 
 let configureApp envFactory (app: IApplicationBuilder) =
-    app.UseDefaultFiles().UseStaticFiles().UseWebSockets().UseGiraffe (root envFactory)
+    app
+        .UseDefaultFiles()
+        .UseStaticFiles()
+        .UseWebSockets()
+        .UseGiraffe(root envFactory)
 
 let configureServices (services: IServiceCollection) =
     services.AddGiraffe() |> ignore
