@@ -7,7 +7,7 @@ open System.Threading
 open MyPlanner.Query
 open System.IO
 open Akkling
-
+open Expecto
 
 let config =
     Configuration.parse (
@@ -114,14 +114,18 @@ let ``I create a task`` (api: IAPI) =
           Version = version0 }
     |> Async.RunSynchronously
 
-
 [<Then>]
-let ``the task should be created successfully`` () = ()
+let ``the task should be created successfully`` (result: Result<Task, string>) =
+    match result with
+    | Ok _ -> ()
+    | Error _ -> "task failed" |> Expect.isTrue false
 
 [<When>]
-let ``I visit url /tasks`` () = ()
+let ``I visit url /tasks`` (queryApi: MyPlanner.Query.API.IAPI) =
+    Thread.Sleep 3000
+    queryApi.Query<Task>() |> Async.RunSynchronously
 
 [<Then>]
-let ``I should see 1 task\(s\) listed`` (api: MyPlanner.Command.API.IAPI) =
-    Thread.Sleep 3000
-    api.ActorApi.Stop().Wait()
+let ``I should see 1 task\(s\) listed`` (tasks: Task list, commandApi: MyPlanner.Command.API.IAPI) =
+    Expect.equal tasks.Length 1 "more than 1 tasks"
+    commandApi.ActorApi.Stop().Wait()
