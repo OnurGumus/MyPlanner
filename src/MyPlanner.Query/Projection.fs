@@ -31,14 +31,15 @@ type Sql =
     SqlDataProvider<Common.DatabaseProviderTypes.SQLITE, SQLiteLibrary=Common.SQLiteLibrary.MicrosoftDataSqlite, ConnectionString=connectionString, ResolutionPath=resolutionPath, CaseSensitivityChange=Common.CaseSensitivityChange.ORIGINAL>
 
 
-let ctx =
-    Sql.GetDataContext("Data Source=InMemorySample;Mode=Memory;Cache=Shared")
 
-let createTables () =
-    let conn  = ctx.CreateConnection()
+let createTables (connectionString: string) =
+    let ctx = Sql.GetDataContext(connectionString)
+    let conn = ctx.CreateConnection()
     conn.Open()
+
     try
         let cmd = conn.CreateCommand()
+
         let offsets = "CREATE TABLE Offsets (
             OffsetName	TEXT,
             OffsetCount	INTEGER NOT NULL DEFAULT 0,
@@ -46,39 +47,43 @@ let createTables () =
         );"
         cmd.CommandText <- offsets
         cmd.ExecuteNonQuery() |> ignore
-        let tasks = 
-            "CREATE TABLE Tasks (
+
+        let tasks = "CREATE TABLE Tasks (
                 Id TEXT NOT NULL, Version INTEGER NOT NULL,
                 CONSTRAINT Tasks_PK PRIMARY KEY (Id)
             )"
         cmd.CommandText <- tasks
         cmd.ExecuteNonQuery() |> ignore
-        let offset = ctx.Main.Offsets.``Create(OffsetCount)`` 0L
+
+        let offset =
+            ctx.Main.Offsets.``Create(OffsetCount)`` 0L
+
         offset.OffsetName <- "Tasks"
         ctx.SubmitUpdates()
 
-        let list = "SELECT 
+        let list = "SELECT
             count(*)
-        FROM 
+        FROM
         sqlite_master
-        WHERE 
-            type ='table' AND 
+        WHERE
+            type ='table' AND
             name NOT LIKE 'sqlite_%'"
         cmd.CommandText <- list
-        let count : int64 = cmd.ExecuteScalar() :?> _
+        let count: int64 = cmd.ExecuteScalar() :?> _
         printf "%A count" count
         conn
-    with ex -> 
+    with ex ->
         printf "%A" ex
         conn
-    
+
 
 QueryEvents.SqlQueryEvent
 |> Event.add (fun sql -> Log.Debug("Executing SQL: {SQL}", sql))
 
-let handleEvent (envelop: EventEnvelope) =
+let inline handleEvent (connectionString: string) (envelop: EventEnvelope) =
+    let ctx = Sql.GetDataContext(connectionString)
     Log.Information("Handle event {@Envelope}", envelop)
-   
+
     try
         match envelop.Event with
         | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
@@ -86,7 +91,6 @@ let handleEvent (envelop: EventEnvelope) =
             | Event ({ Event = Command.Domain.Task.TaskCreated task }) ->
                 let (Version v) = task.Version
                 let (TaskId tid) = task.Id
-
                 let row = ctx.Main.Tasks.Create(v)
 
                 row.Id <- tid
@@ -102,7 +106,6 @@ let handleEvent (envelop: EventEnvelope) =
 open Akkling.Streams
 open MyPlanner.Command.Actor
 
-
 let readJournal system =
     printfn "sql id:%A" SqlReadJournal.Identifier
 
@@ -110,8 +113,8 @@ let readJournal system =
         .Get(system)
         .ReadJournalFor<SqlReadJournal>(SqlReadJournal.Identifier)
 
+let init connectionString (actorApi: IActor) =
 
-let init (actorApi: IActor) =
     let source =
         (readJournal actorApi.System)
             .EventsByTag("default", Offset.Sequence(0L))
@@ -119,7 +122,7 @@ let init (actorApi: IActor) =
     System.Threading.Thread.Sleep(100)
 
     source
-    |> Source.runForEach actorApi.Materializer (handleEvent)
+    |> Source.runForEach actorApi.Materializer (handleEvent connectionString)
     |> Async.StartAsTask
     |> ignore
 

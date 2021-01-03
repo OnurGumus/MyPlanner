@@ -9,11 +9,12 @@ open MyPlanner.Shared.Domain
 open Domain
 open Actor
 open NodaTime
+open System
 
 let createTask (domainApi: IDomain): CreateTask =
     fun ({ Id = TaskId taskId } as task) ->
         async {
-            let taskId = sprintf "task_%s" <| taskId
+            let taskId = $"task_{taskId}" |> Uri.EscapeUriString
 
             let corID = taskId |> SagaStarter.toCid
             let taskActor = domainApi.TaskFactory taskId

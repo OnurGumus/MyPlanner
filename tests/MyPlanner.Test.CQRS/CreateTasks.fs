@@ -92,17 +92,26 @@ let config =
 
 [<Given>]
 let ``there are no tasks in the system`` () =
-    let conn = MyPlanner.Query.Projection.createTables()
-    let api =
+    let connString =
+        "Data Source=InMemorySample;Mode=Memory;Cache=Shared"
+
+    let conn =
+        MyPlanner.Query.Projection.createTables (connString)
+
+    let commandApi =
         MyPlanner.Command.API.api config NodaTime.SystemClock.Instance
 
-    Projection.init (api.ActorApi)
-    conn,api
+    let queryApi =
+        MyPlanner.Query.API.api connString commandApi.ActorApi
+
+    conn, commandApi, queryApi
 
 
 [<When>]
 let ``I create a task`` (api: IAPI) =
-    api.CreateTask { Id = TaskId "a"; Version = version0 }
+    api.CreateTask
+        { Id = TaskId "test_task"
+          Version = version0 }
     |> Async.RunSynchronously
 
 
@@ -113,6 +122,6 @@ let ``the task should be created successfully`` () = ()
 let ``I visit url /tasks`` () = ()
 
 [<Then>]
-let ``I should see 1 task\(s\) listed`` (api: IAPI) =
+let ``I should see 1 task\(s\) listed`` (api: MyPlanner.Command.API.IAPI) =
     Thread.Sleep 3000
     api.ActorApi.Stop().Wait()
