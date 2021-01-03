@@ -16,6 +16,9 @@ let automationPath =
 let serverTestPath =
     Path.getFullName "./tests/MyPlanner.Test"
 
+let cqrsServerTestPath =
+    Path.getFullName "./tests/MyPlanner.Test.CQRS"
+
 let clientPath =
     Path.getFullName "./src/MyPlanner.Client"
 
@@ -99,6 +102,16 @@ Target.create
             ("publish --configuration release --output "
              + deployDir)
             serverPath)
+Target.create
+    "RunCQRSTests"
+    (fun _ ->
+        runDotNet
+            "test /p:AltCover=true /p:AltCoverShowSummary=YELLOW /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage \
+            /p:AltCoverForce=true /p:AltCoverLocalSource=true \
+            /p:AltCoverAssemblyFilter=\"\" \
+            /p:AltCoverVisibleBranches=true \
+            /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S00C95"
+            cqrsServerTestPath)
 
 Target.create
     "RunTests"
