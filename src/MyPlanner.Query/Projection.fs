@@ -80,7 +80,7 @@ let createTables (connectionString: string) =
 QueryEvents.SqlQueryEvent
 |> Event.add (fun sql -> Log.Debug("Executing SQL: {SQL}", sql))
 
-let inline handleEvent (connectionString: string) (envelop: EventEnvelope) =
+let handleEvent (connectionString: string) (envelop: EventEnvelope) =
     let ctx = Sql.GetDataContext(connectionString)
     Log.Information("Handle event {@Envelope}", envelop)
 

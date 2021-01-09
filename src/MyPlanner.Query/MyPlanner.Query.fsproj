@@ -4,7 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Tasks.fs" />
     <Compile Include="Projection.fs" />
     <Compile Include="API.fs" />
   </ItemGroup>

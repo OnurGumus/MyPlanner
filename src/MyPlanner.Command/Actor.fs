@@ -1,3 +1,4 @@
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 module MyPlanner.Command.Actor
 
 open System.Collections.Immutable

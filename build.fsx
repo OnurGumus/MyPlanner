@@ -108,7 +108,7 @@ Target.create
         runDotNet
             "test /p:AltCover=true /p:AltCoverShowSummary=YELLOW /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage \
             /p:AltCoverForce=true /p:AltCoverLocalSource=true \
-            /p:AltCoverAssemblyFilter=\"\" \
+            /p:AltCoverAssemblyFilter=\"\.Test\" \
             /p:AltCoverVisibleBranches=true \
             /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S00C95"
             cqrsServerTestPath)
@@ -121,7 +121,7 @@ Target.create
             /p:AltCoverForce=true /p:AltCoverLocalSource=true \
             /p:AltCoverAssemblyFilter=\"\" \
             /p:AltCoverVisibleBranches=true \
-            /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S60C95"
+            /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S00C95"
             serverTestPath)
 
 Target.create
