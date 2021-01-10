@@ -35,7 +35,13 @@ type Sql =
 
 
 let createTables (config: IConfiguration) =
-    let ctx = Sql.GetDataContext(config.GetSection(Constants.ConnectionString).Value)
+    let ctx =
+        Sql.GetDataContext(
+            config
+                .GetSection(Constants.ConnectionString)
+                .Value
+        )
+
     let conn = ctx.CreateConnection()
     conn.Open()
 
@@ -115,11 +121,12 @@ let readJournal system =
         .Get(system)
         .ReadJournalFor<SqlReadJournal>(SqlReadJournal.Identifier)
 
-let init connectionString (actorApi: IActor) =
-
+let init (connectionString: string) (actorApi: IActor) =
+    let ctx = Sql.GetDataContext(connectionString)
+    let offsetCount = ctx.Main.Offsets.Individuals.Tasks.OffsetCount
     let source =
         (readJournal actorApi.System)
-            .EventsByTag("default", Offset.Sequence(0L))
+            .EventsByTag("default", Offset.Sequence(offsetCount))
 
     System.Threading.Thread.Sleep(100)
 

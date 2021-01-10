@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(BuildingInsideVisualStudio)' == 'true' ">
+    <DefineConstants>_VS</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Projection.fs" />
     <Compile Include="API.fs" />
