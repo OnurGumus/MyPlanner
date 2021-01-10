@@ -22,7 +22,7 @@ config {
         plugin = "akka.persistence.journal.sqlite"
         sqlite
         {
-            connection-string = "Data Source=InMemorySample;Mode=Memory;Cache=Shared;"
+            connection-string = ${config.connection-string}
             auto-initialize = on
             event-adapters.tagger = "MyPlanner.Command.Actor+Tagger, MyPlanner.Command"
             event-adapter-bindings {
@@ -34,7 +34,7 @@ config {
         plugin = "akka.persistence.snapshot-store.sqlite"
         sqlite {
           auto-initialize = on
-          connection-string = "Data Source=InMemorySample;Mode=Memory;Cache=Shared"
+          connection-string = ${config.connection-string} 
         }
       }
     }
