@@ -9,5 +9,5 @@ NodaTime
 NodaTime.Serialization.JsonNet
 Akka.Persistence.Sqlite
 Microsoft.Data.SQLite.Core
-Dynamic.ConfigSection
 FSharp.Interop.Dynamic
+Microsoft.Extensions.Configuration

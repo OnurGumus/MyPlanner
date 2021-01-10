@@ -19,7 +19,7 @@ open NodaTime.Serialization.JsonNet
 type PlainNewtonsoftJsonSerializer(system: ExtendedActorSystem) =
     inherit Serializer(system)
 
-    let ser = new JsonSerializer()
+    let ser = JsonSerializer()
 
     do
         ser.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb)
@@ -354,10 +354,8 @@ module QuotationHelpers =
 module DynamicConfig =
     open System.Runtime.CompilerServices
     open Microsoft.Extensions.Configuration
-    open System
     open System.Dynamic
     open System.Collections.Generic
-    open System
     let rec replaceWithArray (parent: ExpandoObject) (key: string) (input: ExpandoObject option) =
         match input with
         | None -> ()
@@ -366,7 +364,7 @@ module DynamicConfig =
             let keys = dict.Keys |> List.ofSeq
 
             if keys
-               |> Seq.forall (fun k -> k |> Int32.TryParse |> fst) then
+               |> Seq.forall (Int32.TryParse >> fst) then
                 let arr = keys.Length |> Array.zeroCreate
 
                 for kvp in dict do
@@ -430,8 +428,7 @@ module DynamicConfig =
                     let v  = d.[head]
                     loop tail v
                 | _ -> res
-            let res = loop paths res
-            res
+            loop paths res
 
         /// <summary>
         /// An extension method that returns given string as an dynamic Expando object
