@@ -8,3 +8,5 @@ Akka.Persistence.Sqlite
 Microsoft.Data.SQLite.Core
 SQLProvider
 SQLitePCLRaw.core
+Microsoft.Extensions.Configuration
+Dynamic.ConfigSection

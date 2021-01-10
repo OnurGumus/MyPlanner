@@ -10,6 +10,9 @@
     <Compile Include="CreateTasks.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
+    <Content Include="./config.hocon">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="../../features/create-tasks.feature" />
   </ItemGroup>
   <ItemGroup>

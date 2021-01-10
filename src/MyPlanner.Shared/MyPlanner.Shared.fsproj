@@ -4,8 +4,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-   <Compile Include="Domain.fs" />
-   <Compile Include="Msg.fs" />
+    <Compile Include="Constants.fs" />
+    <Compile Include="Util.fs" />
+    <Compile Include="Domain.fs" />
+    <Compile Include="Msg.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

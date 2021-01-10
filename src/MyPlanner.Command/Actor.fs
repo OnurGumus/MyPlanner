@@ -9,6 +9,14 @@ open Akka.Cluster
 open Akka.Cluster.Tools.PublishSubscribe
 open Akka.Persistence.Sqlite
 open Akkling
+open Microsoft.Extensions.Configuration
+open Common.DynamicConfig
+open MyPlanner.Shared
+open System.Dynamic
+open FSharp.Interop.Dynamic
+open System.Runtime.CompilerServices
+open Microsoft.Extensions.Configuration
+open System
 
 let private defaultTag = ImmutableHashSet.Create("default")
 
@@ -27,7 +35,9 @@ type IActor =
     abstract SubscribeForCommand: Common.CommandHandler.Command<'a, 'b> -> Async<Common.Event<'b>>
     abstract Stop: unit -> System.Threading.Tasks.Task
 
-let api config =
+let api (config:IConfiguration) =
+    let (akkaConfig:ExpandoObject) = unbox<_>(config.GetSectionAsDynamic(Constants.Akka))
+    let config = Akka.Configuration.ConfigurationFactory.FromObject akkaConfig
     let system = System.create "cluster-system" config
 
     SqlitePersistence.Get(system) |> ignore

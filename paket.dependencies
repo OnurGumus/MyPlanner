@@ -31,7 +31,11 @@ nuget Akka.Persistence.Sqlite
 nuget Microsoft.Data.SQLite.Core 
 nuget SQLProvider 
 nuget SQLitePCLRaw.core 
- 
+nuget Microsoft.Extensions.Configuration
+nuget Dynamic.ConfigSection
+nuget Hocon.Extensions.Configuration
+nuget FSharp.Interop.Dynamic
+
 group Build
     source https://api.nuget.org/v3/index.json
     framework: netstandard2.0 

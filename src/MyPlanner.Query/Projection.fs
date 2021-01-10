@@ -9,6 +9,8 @@ open MyPlanner
 open MyPlanner.Shared.Domain
 open FSharp.Data.Sql
 open FSharp.Data.Sql.Common
+open Microsoft.Extensions.Configuration
+open MyPlanner.Shared
 
 [<Literal>]
 #if _VS
@@ -32,8 +34,8 @@ type Sql =
 
 
 
-let createTables (connectionString: string) =
-    let ctx = Sql.GetDataContext(connectionString)
+let createTables (config: IConfiguration) =
+    let ctx = Sql.GetDataContext(config.GetSection(Constants.ConnectionString).Value)
     let conn = ctx.CreateConnection()
     conn.Open()
 
