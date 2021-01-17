@@ -1,8 +1,12 @@
 module MyPlanner.Shared.Msg
 
 module ServerToClient =
-    type Msg = ServerConnected
+    type TasksMsg = TasksFetched of Domain.Task list
 
+    type Msg =
+        | ServerConnected
+        | TasksMsg of TasksMsg
 
 module ClientToServer =
-    type Msg = NA
+    type TasksMsg = TasksRequested
+    type Msg = TasksMsg of TasksMsg

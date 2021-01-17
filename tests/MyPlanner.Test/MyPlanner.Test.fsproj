@@ -10,9 +10,11 @@
     <Compile Include="Environments.fs" />
     <Compile Include="ElmishLoop.fs" />
     <Compile Include="CreateTasks.fs" />
+    <Compile Include="StartPage.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
     <EmbeddedResource Include="../../features/create-tasks.feature" />
+    <EmbeddedResource Include="../../features/start-page.feature" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyPlanner.Client\MyPlanner.Client.fsproj" />
