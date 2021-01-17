@@ -14,6 +14,7 @@ open MyPlanner.Server
 open MyPlanner.Shared.Msg
 open MyPlanner.Shared.Domain
 open Query
+open MyPlanner.Shared
 
 #if DEBUG
 let publicPath =
@@ -41,11 +42,10 @@ let publicPath = Path.GetFullPath "./clientFiles"
 //     |> ElmishBridge.Bridge.run Elmish.Bridge.Giraffe.server
 
 
-[<Literal>]
-let Socket_Endpoint = "/socket/main"
+
 
 let bridge env =
-    Bridge.mkServer Socket_Endpoint State.init (State.update env)
+    Bridge.mkServer Constants.Socket_Endpoint State.init (State.update env)
     |> Bridge.run Giraffe.server
 
 let webApp env: HttpHandler =

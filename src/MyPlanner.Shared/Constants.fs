@@ -5,3 +5,6 @@ let Akka = "config:akka"
 
 [<Literal>]
 let ConnectionString = "config:connection-string"
+
+[<Literal>]
+let Socket_Endpoint = "/socket/main"

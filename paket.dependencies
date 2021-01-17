@@ -35,6 +35,19 @@ nuget Microsoft.Extensions.Configuration
 nuget Hocon.Extensions.Configuration
 nuget FSharp.Interop.Dynamic
 
+group Client
+    source https://api.nuget.org/v3/index.json
+    framework: auto-detect 
+    storage: none
+    nuget Fable.Core
+    nuget Fable.Elmish.Debugger
+    nuget Fable.Elmish.React
+    nuget Fable.Elmish.HMR
+    nuget Elmish.Bridge.Client
+    nuget Fable.Elmish.Browser
+    nuget Feliz
+
+
 group Build
     source https://api.nuget.org/v3/index.json
     framework: netstandard2.0 
