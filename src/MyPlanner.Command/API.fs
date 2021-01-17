@@ -31,6 +31,7 @@ let createTask (domainApi: IDomain): CreateTask =
                       (function
                       | TaskCreated _ -> true) }
                 |> Execute
+
             match! (domainApi.ActorApi.SubscribeForCommand c) with
             | { Event = TaskCreated t; Version = v } -> return Ok t
         }
@@ -44,7 +45,6 @@ type IAPI =
 let api config (clock: IClock) =
     let actorApi = Actor.api config
     let domainApi = Domain.api clock actorApi
-
     { new IAPI with
         member _.ActorApi = actorApi
         member _.CreateTask = createTask domainApi }

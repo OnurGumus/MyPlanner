@@ -6,6 +6,7 @@ open Elmish
 open MyPlanner.Client
 open MyPlanner.Server.State
 open MyPlanner.Server
+open MyPlanner.Shared.Domain
 
 let run initPage
         clientModel
@@ -36,7 +37,7 @@ let run initPage
         |> Program.withTrace (fun msg model -> printfn "Server-Msg: %A \nServer-Model %A" msg model)
         |> Program.run
 
-    let serverModel = ref Unchecked.defaultof<unit>
+    let serverModel = ref Unchecked.defaultof<Task list>
 
     //add messages to buffer. This implementation will be replaced by a proper dispatcher
     // once sub is invoked.
@@ -64,7 +65,7 @@ let run initPage
             := Some
                 (fun m ->
                     let (page: Main.Route option) = s
-                    Main.urlUpdate page m)
+                    Main.urlUpdate bridgeSend page m)
             //trigger update by dummy msg
             ! (dispatcher) Unchecked.defaultof<Main.Msg>
 

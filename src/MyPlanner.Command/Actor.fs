@@ -35,9 +35,13 @@ type IActor =
     abstract SubscribeForCommand: Common.CommandHandler.Command<'a, 'b> -> Async<Common.Event<'b>>
     abstract Stop: unit -> System.Threading.Tasks.Task
 
-let api (config:IConfiguration) =
-    let (akkaConfig:ExpandoObject) = unbox<_>(config.GetSectionAsDynamic(Constants.Akka))
-    let config = Akka.Configuration.ConfigurationFactory.FromObject akkaConfig
+let api (config: IConfiguration) =
+    let (akkaConfig: ExpandoObject) =
+        unbox<_> (config.GetSectionAsDynamic(Constants.Akka))
+
+    let config =
+        Akka.Configuration.ConfigurationFactory.FromObject akkaConfig
+
     let system = System.create "cluster-system" config
 
     SqlitePersistence.Get(system) |> ignore
@@ -51,6 +55,7 @@ let api (config:IConfiguration) =
 
     let subscribeForCommand command =
         Common.CommandHandler.subscribeForCommand system (typed mediator) command
+
     { new IActor with
         member _.Mediator = mediator
         member _.Materializer = mat

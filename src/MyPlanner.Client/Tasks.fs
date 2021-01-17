@@ -1,12 +1,18 @@
 module MyPlanner.Client.Tasks
+
 open Elmish
+open MyPlanner.Shared.Domain
+open MyPlanner.Shared.Msg
 
-type Model = NA
+type Model = { Tasks: Task list }
 
-type Msg = NA
+type Msg = Remote of ServerToClient.TasksMsg
 
+let init bridgeSend =
+    { Tasks = [] }, Cmd.ofSub (fun _ -> bridgeSend (ClientToServer.TasksRequested))
 
-let init = Model.NA, Cmd.none
+let update msg model =
+    match msg with
+    | Remote (ServerToClient.TasksFetched tasks) -> { model with Tasks = tasks }, Cmd.none
 
-
-let update msg model = model, Cmd.none
+let mapClientMsg msg = Remote msg

@@ -356,6 +356,7 @@ module DynamicConfig =
     open Microsoft.Extensions.Configuration
     open System.Dynamic
     open System.Collections.Generic
+
     let rec replaceWithArray (parent: ExpandoObject) (key: string) (input: ExpandoObject option) =
         match input with
         | None -> ()
@@ -363,8 +364,7 @@ module DynamicConfig =
             let dict = input :> IDictionary<_, _>
             let keys = dict.Keys |> List.ofSeq
 
-            if keys
-               |> Seq.forall (Int32.TryParse >> fst) then
+            if keys |> Seq.forall (Int32.TryParse >> fst) then
                 let arr = keys.Length |> Array.zeroCreate
 
                 for kvp in dict do
@@ -391,20 +391,18 @@ module DynamicConfig =
             let mutable i = 0
 
             while i < path.Length - 1 do
-                if parent.ContainsKey(path.[i]) |> not then
-                    parent.Add(path.[i], ExpandoObject())
+                if parent.ContainsKey(path.[i]) |> not then parent.Add(path.[i], ExpandoObject())
 
                 parent <- downcast parent.[path.[i]]
                 i <- i + 1
 
-            if kvp.Value |> isNull |> not then
-                parent.Add(path.[i], kvp.Value)
+            if kvp.Value |> isNull |> not then parent.Add(path.[i], kvp.Value)
 
         replaceWithArray null null (Some result)
         upcast result
 
     [<Extension>]
-    type ConfigExtension () =
+    type ConfigExtension() =
         /// <summary>
         /// An extension method that returns given string as an dynamic Expando object
         /// </summary>
@@ -414,20 +412,30 @@ module DynamicConfig =
         /// <exception cref="System.ArgumentNullException">Thrown configuration or section is null</exception>
         [<Extension>]
 
-        static member GetSectionAsDynamic(configuration : IConfiguration , section : string) :  [<return:Dynamic>] obj =
-            if configuration |> isNull then "configuration" |> ArgumentNullException |> raise
-            if section |> isNull then "section" |> ArgumentNullException |> raise
-            let configs = configuration.GetSection(section).AsEnumerable() |> Seq.filter (fun k-> k.Key.StartsWith(sprintf "%s:" section))
-            let res =  getSection configs
-            let paths = 
-                section.Split(":", StringSplitOptions.None) 
+        static member GetSectionAsDynamic(configuration: IConfiguration, section: string): obj =
+            if configuration |> isNull
+            then "configuration" |> ArgumentNullException |> raise
+
+            if section |> isNull
+            then "section" |> ArgumentNullException |> raise
+
+            let configs =
+                configuration.GetSection(section).AsEnumerable()
+                |> Seq.filter (fun k -> k.Key.StartsWith(sprintf "%s:" section))
+
+            let res = getSection configs
+
+            let paths =
+                section.Split(":", StringSplitOptions.None)
                 |> List.ofArray
-            let rec loop paths (res:obj) =
-                match paths,res with
-                | head::(_::_ as tail) , (:? IDictionary<string,obj>  as d) -> 
-                    let v  = d.[head]
+
+            let rec loop paths (res: obj) =
+                match paths, res with
+                | head :: (_ :: _ as tail), (:? IDictionary<string, obj> as d) ->
+                    let v = d.[head]
                     loop tail v
                 | _ -> res
+
             loop paths res
 
         /// <summary>
@@ -438,7 +446,9 @@ module DynamicConfig =
         /// <returns>An expando object represents given section</returns>
         /// <exception cref="System.ArgumentNullException">Thrown configuration is null</exception>
         [<Extension>]
-        static member GetRootAsDynamic(configuration : IConfiguration) :  [<return:Dynamic>] obj =
-            if configuration |> isNull then "configuration" |> ArgumentNullException |> raise
+        static member GetRootAsDynamic(configuration: IConfiguration): obj =
+            if configuration |> isNull
+            then "configuration" |> ArgumentNullException |> raise
+
             let configs = configuration.AsEnumerable()
             getSection configs

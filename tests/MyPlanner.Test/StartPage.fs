@@ -15,16 +15,19 @@ let ``there is 1 task on the system`` () =
     Environments.AppEnv(tasks)
 
 [<When>]
-let ``I visit the start page`` ((appEnv:AppEnv)) = 
-    let api = ElmishLoop.runWithDefaults appEnv Main.startPage
+let ``I visit the start page`` ((appEnv: AppEnv)) =
+    let api =
+        ElmishLoop.runWithDefaults appEnv Main.startPage
+
     System.Threading.Thread.Sleep 500
     api
 
 [<Then>]
-let ``I should be redirect to /tasks`` (api:ElmishLoop.API) = 
+let ``I should be redirect to /tasks`` (api: ElmishLoop.API) =
     let model = !api.ClientModel
+
     match model.ConnectionStatus, model.Page with
-    | Main.Connected, Some (Main.Page.Tasks(Some _)) -> true
+    | Main.Connected, Some (Main.Page.Tasks (Some _)) -> true
     | _ -> false
-    |> Expect.isTrue <| "Not on the tasks page"
-   
+    |> Expect.isTrue
+    <| "Not on the tasks page"

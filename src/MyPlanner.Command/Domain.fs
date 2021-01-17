@@ -38,7 +38,8 @@ module Task =
                             CorrelationId = ci },
                   (None, v) ->
                     let task =
-                        { t with Version = Version(v + 1L) } |> TaskCreated
+                        { t with Version = Version(v + 1L) }
+                        |> TaskCreated
 
                     let event = toEvent ci (task) (v + 1L)
 
@@ -83,7 +84,6 @@ let api (clock: IClock) (actorApi: IActor) =
     |> Log.Debug
 
     System.Threading.Thread.Sleep(1000)
-
     { new IDomain with
         member _.Clock = clock
         member _.ActorApi = actorApi

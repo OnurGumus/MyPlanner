@@ -123,7 +123,10 @@ let readJournal system =
 
 let init (connectionString: string) (actorApi: IActor) =
     let ctx = Sql.GetDataContext(connectionString)
-    let offsetCount = ctx.Main.Offsets.Individuals.Tasks.OffsetCount
+
+    let offsetCount =
+        ctx.Main.Offsets.Individuals.Tasks.OffsetCount
+
     let source =
         (readJournal actorApi.System)
             .EventsByTag("default", Offset.Sequence(offsetCount))

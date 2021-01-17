@@ -14,9 +14,12 @@ open Hocon.Extensions.Configuration
 
 [<Given>]
 let ``there are no tasks in the system`` () =
-    
-    let configBuilder = ConfigurationBuilder();
-    let config = configBuilder.AddHoconFile("config.hocon").Build();
+
+    let configBuilder = ConfigurationBuilder()
+
+    let config =
+        configBuilder.AddHoconFile("config.hocon").Build()
+
     let conn =
         MyPlanner.Query.Projection.createTables (config)
 
