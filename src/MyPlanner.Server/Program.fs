@@ -34,5 +34,5 @@ let buildHost envFactory =
 
 [<EntryPoint>]
 let main _ =
-    (buildHost (fun c -> State.AppEnv(c))).Run()
+    (buildHost (fun c -> Environments.AppEnv(c))).Run()
     0

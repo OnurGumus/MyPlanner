@@ -8,6 +8,7 @@
     <Compile Include="Command.fs" />
     <Compile Include="Query.fs" />
     <Compile Include="State.fs" />
+    <Compile Include="Environments.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
