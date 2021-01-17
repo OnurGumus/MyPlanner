@@ -12,7 +12,7 @@ let run initPage
         clientModel
         (clientDispatcher: ref<Dispatch<Main.Msg>>)
         (newUrl: ref<Main.Route option -> unit>)
-        (appEnv: Environments.AppEnv)
+        (appEnv: MyPlanner.Test.Environments.AppEnv)
         =
 
     let serverDispatchQueue = ref []
@@ -32,7 +32,7 @@ let run initPage
                     //release the buffered messages
                     !serverDispatchQueue |> List.iter !dispatcher)
 
-        Program.mkProgram (Server.init clientDispatch) (Server.update appEnv clientDispatch) view
+        Program.mkProgram (State.init clientDispatch) (State.update appEnv clientDispatch) view
         |> Program.withSubscription sub
         |> Program.withTrace (fun msg model -> printfn "Server-Msg: %A \nServer-Model %A" msg model)
         |> Program.run
@@ -93,7 +93,7 @@ let run initPage
         |> Program.run
 
     let bridgeSend remoteMsg =
-        Server.Remote remoteMsg |> !serverDispatcher
+        State.Remote remoteMsg |> !serverDispatcher
 
     runClientLoop bridgeSend clientModel clientDispatcher
     runServerLoop serverModel serverDispatcher
@@ -108,10 +108,10 @@ type API =
     { ClientModel: Main.Model ref
       ClientDispatcher: Dispatch<Main.Msg>
       NewUrl: Main.Route option -> unit
-      AppEnv: Environments.AppEnv }
+      AppEnv: MyPlanner.Test.Environments.AppEnv }
 
 
-let runWithDefaults (appEnv: Environments.AppEnv) initPage =
+let runWithDefaults (appEnv: MyPlanner.Test.Environments.AppEnv) initPage =
     let clientModel: Main.Model ref = ref Unchecked.defaultof<_>
 
     let clientDispatcher: Dispatch<Main.Msg> ref = ref Unchecked.defaultof<_>

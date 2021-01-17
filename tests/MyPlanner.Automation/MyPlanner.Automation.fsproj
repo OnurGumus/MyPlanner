@@ -5,7 +5,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Host.fs" />
     <Compile Include="CreateTasks.fs" />
+    <Compile Include="StartPage.fs" />
     <Compile Include="Program.fs" />
     <EmbeddedResource Include="../../features/create-tasks.feature" />
   </ItemGroup>
