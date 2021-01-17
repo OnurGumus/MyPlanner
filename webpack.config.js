@@ -1,15 +1,124 @@
 var path = require("path");
+var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
-module.exports = {
-    mode: "development",
-    entry: "./src/MyPlanner.Client.View/App.fs.js",
-    output: {
-        path: path.join(__dirname, "./public"),
-        filename: "bundle.js",
-    },
-    devServer: {
-        contentBase: "./public",
-        port: 8080,
+const getBaseUrl = env => (env.baseUrl) ? `/${env.baseUrl}/` : "/";
+const isProduction = false;
+// The HtmlWebpackPlugin allows us to use a template for the index.html page
+// and automatically injects <script> or <link> tags for generated bundles.
+var commonPlugins = env => [
+    new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: resolve(CONFIG.indexHtmlTemplate)
+    }),
+    new webpack.DefinePlugin({
+        baseUrl: JSON.stringify(env.baseUrl),
+    }),
+  //  new BaseHrefWebpackPlugin({ baseHref: getBaseUrl(env) })
+];
+
+var CONFIG = {
+    // The tags to include the generated JS and CSS will be automatically injected in the HTML template
+    // See https://github.com/jantimon/html-webpack-plugin
+    indexHtmlTemplate: './src/MyPlanner.Client.View/index.html',
+    fsharpEntry: './src/MyPlanner.Client.View/App.fs.js',
+    cssEntry: './src/MyPlanner.Client.View/style.css',
+    outputDir: './src/MyPlanner.Client.View/deploy',
+    assetsDir: './src/MyPlanner.Client.View/public',
+    devServerPort: 8080,
+    // When using webpack-dev-server, you may need to redirect some calls
+    // to a external API server. See https://webpack.js.org/configuration/dev-server/#devserver-proxy
+    devServerProxy: {
+        // redirect requests that start with /api/* to the server on port 8085
+        '/api/*': {
+            target: 'http://localhost:' + (process.env.SERVER_PROXY_PORT || "8085"),
+            changeOrigin: true
+        },
+        // redirect websocket requests that start with /socket/* to the server on the port 8085
+        '/socket/*': {
+            target: 'http://localhost:' + (process.env.SERVER_PROXY_PORT || "8085"),
+            ws: true
+        }
     }
-    
+}
+
+module.exports = env => ({
+    entry: isProduction ? {
+        app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.cssEntry)]
+    } : {
+            app: [resolve(CONFIG.fsharpEntry)],
+            style: [resolve(CONFIG.cssEntry)]
+        },
+    // Add a hash to the output file name in production
+    // to prevent browser caching if code changes
+    output: {
+        path: resolve(CONFIG.outputDir),
+        filename: isProduction ? '[name].[hash].js' : '[name].js'
+    },
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? 'none' : 'eval-source-map',
+    optimization: {
+        splitChunks: {
+            chunks: 'all'
+        },
+        // NOTE: Toggle javascript minimized output
+        //       Use if you want to debug the generated javascript code
+        // minimize: false
+    },
+    // Besides the HtmlPlugin, we use the following plugins:
+    // PRODUCTION
+    //      - MiniCssExtractPlugin: Extracts CSS from bundle to a different file
+    //          To minify CSS, see https://github.com/webpack-contrib/mini-css-extract-plugin#minimizing-for-production
+    //      - CopyWebpackPlugin: Copies static assets to output directory
+    // DEVELOPMENT
+    //      - HotModuleReplacementPlugin: Enables hot reloading when code changes without refreshing
+    plugins: isProduction ?
+        commonPlugins(env).concat([
+            new MiniCssExtractPlugin({ filename: 'style.[hash].css' }),
+            new CopyWebpackPlugin([{ from: resolve(CONFIG.assetsDir) }]),
+        ])
+        : commonPlugins(env).concat([
+            new webpack.HotModuleReplacementPlugin(),
+        ]),
+    devServer: {
+        publicPath: '/',
+        contentBase: resolve(CONFIG.assetsDir),
+        host: '0.0.0.0',
+        port: CONFIG.devServerPort,
+        proxy: CONFIG.devServerProxy,
+        hot: true,
+        inline: true,
+        historyApiFallback: true
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(sass|scss|css)$/,
+                use: [
+                    isProduction
+                        ? MiniCssExtractPlugin.loader
+                        : 'style-loader',
+                    'css-loader',
+                    {
+                        loader: 'resolve-url-loader',
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: { implementation: require('sass') }
+                    }
+                ],
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?.*)?$/,
+                use: ['file-loader']
+            }
+        ]
+    }
+})
+
+function resolve(filePath) {
+    return path.isAbsolute(filePath) ? filePath : path.join(__dirname, filePath);
 }
