@@ -26,11 +26,10 @@ let toPage =
     | Route.Tasks -> "/"
 
 let parseRoute: Parser<Route -> Route, Route> =
-    let addBaseUrl p = p
-        // match baseUrl with
-        // | null
-        // | "" -> p
-        // | _ -> (s baseUrl) </> p
+    let addBaseUrl p =
+        match baseUrl with
+        | null
+        | "" -> p
+        | _ -> (s baseUrl) </> p
 
-    oneOf [
-            map (Route.Tasks) <| addBaseUrl (s "") ]
+    oneOf [ map (Route.Tasks) <| addBaseUrl (s "") ]

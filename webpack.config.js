@@ -3,7 +3,6 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 
 const getBaseUrl = env => (env.baseUrl) ? `/${env.baseUrl}/` : "/";
 const isProduction = false;
@@ -12,12 +11,12 @@ const isProduction = false;
 var commonPlugins = env => [
     new HtmlWebpackPlugin({
         filename: 'index.html',
-        template: resolve(CONFIG.indexHtmlTemplate)
+        template: resolve(CONFIG.indexHtmlTemplate),
+        'base': { 'href': getBaseUrl(env) }
     }),
     new webpack.DefinePlugin({
         baseUrl: JSON.stringify(env.baseUrl),
-    }),
-  //  new BaseHrefWebpackPlugin({ baseHref: getBaseUrl(env) })
+    })
 ];
 
 var CONFIG = {

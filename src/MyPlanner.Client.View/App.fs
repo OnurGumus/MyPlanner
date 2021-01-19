@@ -16,11 +16,11 @@ open Elmish.HMR
 
 let inline bridgeSend msg = Bridge.Send msg
 
-let socketEndPoint = Constants.Socket_Endpoint
-    // match baseUrl with
-    // | null
-    // | "" -> Constants.Socket_Endpoint
-    // | _ -> "/" + baseUrl + Constants.Socket_Endpoint
+let socketEndPoint = 
+    match baseUrl with
+    | null
+    | "" -> Constants.Socket_Endpoint
+    | _ -> "/" + baseUrl + Constants.Socket_Endpoint
 
 Program.mkProgram (Main.init bridgeSend) (Main.update bridgeSend newUrl toPage) Main.view
 
@@ -32,7 +32,7 @@ Program.mkProgram (Main.init bridgeSend) (Main.update bridgeSend newUrl toPage) 
     |> Bridge.withWhenDown Main.ServerDisconnected
 )
 |> Program.toNavigable (parsePath parseRoute) (Main.urlUpdate bridgeSend)
-|> Program.withReactSynchronous "elmish-app"
+|> Program.withReactSynchronous "app"
 #if DEBUG
 |> Program.withDebugger
 #endif
