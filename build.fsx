@@ -142,13 +142,14 @@ Target.create
 
         let client =
             async {
-                let runTool = runTool Proc.run
-                runTool yarnTool ("webpack-dev-server --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
+                //let runTool = runTool Proc.run
+                //runTool yarnTool ("webpack-dev-server --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
+                runDotNet "fable watch ./src/MyPlanner.Client.View  --run yarn dev" __SOURCE_DIRECTORY__
             }
 
         let browser =
             async {
-                do! Async.Sleep 5000
+                do! Async.Sleep 15000
                 openBrowser "http://localhost:8080"
             }
 
