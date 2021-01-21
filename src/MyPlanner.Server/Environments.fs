@@ -1,6 +1,7 @@
 module MyPlanner.Server.Environments
 open Microsoft.Extensions.Configuration
 open Query
+open Command
 
 
 [<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
@@ -24,3 +25,6 @@ type AppEnv(config: IConfiguration) =
     interface IQuery with
         member _.Query(?filter, ?orderby, ?thenby, ?take, ?skip) =
             queryApi.Query(?filter = filter, ?orderby = orderby, ?thenby = thenby, ?take = take, ?skip = skip)
+
+    interface ITaskCommand with
+        member _.CreateTask = commandApi.CreateTask

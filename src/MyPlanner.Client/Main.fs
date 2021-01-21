@@ -68,7 +68,7 @@ let update (bridgeSend: ClientToServer.Msg -> unit) newUrl toPage msg model =
         Cmd.none
 
     | TasksMsg msg, { Page = Some (Tasks (Some tasksModel)) } ->
-        let newModel, cmd = Tasks.update msg tasksModel
+        let newModel, cmd = Tasks.update (ClientToServer.TasksMsg >> bridgeSend) msg tasksModel
 
         { model with
               Page = Some(Tasks(Some newModel)) },

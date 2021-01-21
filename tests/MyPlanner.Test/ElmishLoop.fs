@@ -7,9 +7,12 @@ open MyPlanner.Client
 open MyPlanner.Server.State
 open MyPlanner.Server
 open MyPlanner.Shared.Domain
+    
+let defaultServerModel = ref Unchecked.defaultof<Task list>
 
 let run initPage
         clientModel
+        serverModel
         (clientDispatcher: ref<Dispatch<Main.Msg>>)
         (newUrl: ref<Main.Route option -> unit>)
         (appEnv: MyPlanner.Test.Environments.AppEnv)
@@ -37,7 +40,7 @@ let run initPage
         |> Program.withTrace (fun msg model -> printfn "Server-Msg: %A \nServer-Model %A" msg model)
         |> Program.run
 
-    let serverModel = ref Unchecked.defaultof<Task list>
+
 
     //add messages to buffer. This implementation will be replaced by a proper dispatcher
     // once sub is invoked.
@@ -106,19 +109,21 @@ let dispatchHelper clientDispatcher parent msg =
 
 type API =
     { ClientModel: Main.Model ref
+      ServerModel : Task list ref
       ClientDispatcher: Dispatch<Main.Msg>
       NewUrl: Main.Route option -> unit
       AppEnv: MyPlanner.Test.Environments.AppEnv }
 
 
-let runWithDefaults (appEnv: MyPlanner.Test.Environments.AppEnv) initPage =
+let runWithDefaults (appEnv: MyPlanner.Test.Environments.AppEnv) initPage serverModel =
     let clientModel: Main.Model ref = ref Unchecked.defaultof<_>
 
     let clientDispatcher: Dispatch<Main.Msg> ref = ref Unchecked.defaultof<_>
     let newUrl: (Main.Route option -> unit) ref = ref Unchecked.defaultof<_>
-    run initPage clientModel clientDispatcher newUrl appEnv
+    run initPage clientModel serverModel clientDispatcher newUrl appEnv
 
     { ClientModel = clientModel
       ClientDispatcher = !clientDispatcher
+      ServerModel = serverModel
       NewUrl = !newUrl
       AppEnv = appEnv }

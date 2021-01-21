@@ -15,9 +15,9 @@ let ``there is 1 task on the system`` () =
     Environments.AppEnv(tasks)
 
 [<When>]
-let ``I visit the start page`` ((appEnv: AppEnv)) =
+let ``I visit the start page`` (appEnv: AppEnv) =
     let api =
-        ElmishLoop.runWithDefaults appEnv Main.startPage
+        ElmishLoop.runWithDefaults appEnv Main.startPage ElmishLoop.defaultServerModel
 
     System.Threading.Thread.Sleep 500
     api
