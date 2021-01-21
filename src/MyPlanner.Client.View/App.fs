@@ -29,10 +29,11 @@ Program.mkProgram (Main.init bridgeSend) (Main.update bridgeSend newUrl toPage) 
 #endif
 |> Program.withBridgeConfig (
     Bridge.endpoint socketEndPoint
+    |> Bridge.withMapping (Main.mapClientMsg) 
     |> Bridge.withWhenDown Main.ServerDisconnected
 )
 |> Program.toNavigable (parsePath parseRoute) (Main.urlUpdate bridgeSend)
-|> Program.withReactSynchronous "app"
+|> Program.withReactSynchronous "elmish-app"
 #if DEBUG
 |> Program.withDebugger
 #endif

@@ -6,3 +6,4 @@ SeriLog
 Destructurama.FSharp
 Serilog.Sinks.Console
 Serilog.Formatting.Compact
+Hocon.Extensions.Configuration

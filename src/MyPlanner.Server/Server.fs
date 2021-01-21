@@ -15,6 +15,7 @@ open MyPlanner.Shared.Msg
 open MyPlanner.Shared.Domain
 open Query
 open MyPlanner.Shared
+open Hocon.Extensions.Configuration
 
 #if DEBUG
 let publicPath =
@@ -54,7 +55,10 @@ let webApp env: HttpHandler =
 
 let root envFactory: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
-        let config = ctx.GetService<IConfiguration>()
+        let configBuilder = ConfigurationBuilder()
+
+        let config =
+            configBuilder.AddHoconFile("config.hocon").Build() 
 
         let appEnv = envFactory config
 

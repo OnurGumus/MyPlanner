@@ -27,8 +27,10 @@ let buildHost envFactory =
         .ConfigureWebHostDefaults(fun webBuilder ->
             webBuilder
                 .UseWebRoot(Server.publicPath)
+                .UseContentRoot(Server.publicPath)
                 .Configure(Action<IApplicationBuilder>(Server.configureApp envFactory))
                 .ConfigureServices(Server.configureServices)
+                .UseUrls("http://0.0.0.0:8085/")  
             |> ignore)
         .Build()
 

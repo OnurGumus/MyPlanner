@@ -11,6 +11,12 @@
     <Compile Include="Environments.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
+    <Content Include="./config.hocon">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="./MyPlanner.db">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content> 
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyPlanner.Shared\MyPlanner.Shared.fsproj" />

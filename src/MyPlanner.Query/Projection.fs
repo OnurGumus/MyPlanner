@@ -27,7 +27,7 @@ let resolutionPath =
 let connectionString =
     @"Data Source="
     + __SOURCE_DIRECTORY__
-    + @"/../MyPlanner.db;"
+    + @"/../MyPlanner.Server/MyPlanner.db;"
 
 type Sql =
     SqlDataProvider<Common.DatabaseProviderTypes.SQLITE, SQLiteLibrary=Common.SQLiteLibrary.MicrosoftDataSqlite, ConnectionString=connectionString, ResolutionPath=resolutionPath, CaseSensitivityChange=Common.CaseSensitivityChange.ORIGINAL>
