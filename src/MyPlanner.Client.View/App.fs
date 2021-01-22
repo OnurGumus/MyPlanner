@@ -21,8 +21,7 @@ let socketEndPoint =
     | null
     | "" -> Constants.Socket_Endpoint
     | _ -> "/" + baseUrl + Constants.Socket_Endpoint
-
-Program.mkProgram (Main.init bridgeSend) (Main.update bridgeSend newUrl toPage) Main.view
+Program.mkProgram (Main.init newUrl Navigation.toPage bridgeSend) (Main.update bridgeSend newUrl toPage) Main.view
 
 #if DEBUG
 |> Program.withConsoleTrace
@@ -32,7 +31,7 @@ Program.mkProgram (Main.init bridgeSend) (Main.update bridgeSend newUrl toPage) 
     |> Bridge.withMapping (Main.mapClientMsg) 
     |> Bridge.withWhenDown Main.ServerDisconnected
 )
-|> Program.toNavigable (parsePath parseRoute) (Main.urlUpdate bridgeSend)
+|> Program.toNavigable (parsePath parseRoute) (Main.urlUpdate newUrl Navigation.toPage bridgeSend)
 |> Program.withReactSynchronous "elmish-app"
 #if DEBUG
 |> Program.withDebugger

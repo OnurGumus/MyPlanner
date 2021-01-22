@@ -32,15 +32,22 @@ let initTask bridgeSend model =
 
 //called externally when url changed from the code at runtime.
 //not called when you land to a page if you type it to the address bar
-let urlUpdate bridgeSend (result: Route option) (model: Model) =
+let urlUpdate newUrl toPage bridgeSend (result: Route option) (model: Model) =
     match result, model.Page with
+    //we are already at tasks page, so no action required.
+    | Some (Route.Tasks), Some (Tasks _) -> model, Cmd.none
     | Some (Route.Tasks), Some _ -> initTask bridgeSend model
     //initial landing handled below
-    | Some (Route.Tasks), None -> { model with Page = Some(Tasks(None)) }, Cmd.none
-    | _ -> failwith "invalid url"
+    | Some (Route.Tasks), None ->
+        { model with Page = Some(Tasks(None)) }, Cmd.ofSub (fun _ -> newUrl ((toPage Route.Tasks), true))
+    | other ->
+        printf "%A" other
+        failwith "invalid url"
 
-let init (bridgeSend: ClientToServer.Msg -> unit) (page: Route option) =
+let init newUrl toPage (bridgeSend: ClientToServer.Msg -> unit) (page: Route option) =
     urlUpdate
+        newUrl
+        toPage
         bridgeSend
         page
         { Page = None
@@ -68,7 +75,8 @@ let update (bridgeSend: ClientToServer.Msg -> unit) newUrl toPage msg model =
         Cmd.none
 
     | TasksMsg msg, { Page = Some (Tasks (Some tasksModel)) } ->
-        let newModel, cmd = Tasks.update (ClientToServer.TasksMsg >> bridgeSend) msg tasksModel
+        let newModel, cmd =
+            Tasks.update (ClientToServer.TasksMsg >> bridgeSend) msg tasksModel
 
         { model with
               Page = Some(Tasks(Some newModel)) },
