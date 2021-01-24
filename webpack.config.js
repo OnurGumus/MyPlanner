@@ -97,7 +97,7 @@ module.exports = env => ({
             {
                 test: /\.(sass|scss|css)$/,
                 use: [
-                    isProduction
+                    isProduction(env)
                         ? MiniCssExtractPlugin.loader
                         : 'style-loader',
                     'css-loader',
