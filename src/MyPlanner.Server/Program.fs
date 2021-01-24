@@ -10,8 +10,20 @@ open Serilog.Events
 open Serilog.Formatting.Compact
 open MyPlanner.Server
 
+open Microsoft.Extensions.Configuration
+open Hocon.Extensions.Configuration
+open MyPlanner.Shared
+let clientPath  = [(Constants.ClientPath,"../MyPlanner.Client/deploy")] |> dict
+let configBuilder =
+    ConfigurationBuilder()
+        .AddHoconFile(Constants.ConfigHocon)
+        .AddEnvironmentVariables()
+        .AddInMemoryCollection(clientPath)
 
-let buildHost envFactory =
+
+
+let buildHost (configBuilder: IConfigurationBuilder) envFactory =
+    let config = configBuilder.Build()
 
     Log.Logger <-
         LoggerConfiguration()
@@ -22,19 +34,23 @@ let buildHost envFactory =
             .Enrich.FromLogContext()
             .CreateLogger()
 
+    let publicPath = Server.publicPath config
+
     Host
         .CreateDefaultBuilder()
         .ConfigureWebHostDefaults(fun webBuilder ->
             webBuilder
-                .UseWebRoot(Server.publicPath)
-                .UseContentRoot(Server.publicPath)
-                .Configure(Action<IApplicationBuilder>(Server.configureApp envFactory))
+                .UseWebRoot(publicPath)
+                .UseContentRoot(publicPath)
+                .Configure(Action<IApplicationBuilder>(Server.configureApp config envFactory))
                 .ConfigureServices(Server.configureServices)
-                .UseUrls("http://0.0.0.0:8085/")  
+                .UseUrls("http://0.0.0.0:8085/")
             |> ignore)
         .Build()
 
 [<EntryPoint>]
 let main _ =
-    (buildHost (fun c -> Environments.AppEnv(c))).Run()
+    (buildHost configBuilder (fun c -> Environments.AppEnv(c)))
+        .Run()
+
     0

@@ -5,7 +5,9 @@ open TickSpec
 open canopy.classic
 
 [<AfterScenarioAttribute>]
-let quitBrowser () = quit ()
+let quitBrowser () = 
+    Host.stopHost()
+    quit ()
 
 [<EntryPointAttribute>]
 let main _ = 
@@ -13,7 +15,7 @@ let main _ =
         do
             let ass = Assembly.GetExecutingAssembly()
             let definitions = StepDefinitions(ass)
-            [ "create-tasks" ]
+            [ "create-tasks"; "start-page" ]
             |> Seq.iter
                 (fun source ->
                     let s =

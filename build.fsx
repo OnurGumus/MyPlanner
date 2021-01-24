@@ -1,3 +1,4 @@
+open System.Threading
 #r "paket: groupref Build //"
 #load ".fake/build.fsx/intellisense.fsx"
 
@@ -169,7 +170,9 @@ Target.create
         |> Async.RunSynchronously
         |> ignore)
 
-Target.create "RunAutomation" (fun _ -> runDotNet "run" automationPath)
+Target.create "RunAutomation" (fun _ -> 
+    runDotNet "fable  ./src/MyPlanner.Client.View  --run yarn prod" __SOURCE_DIRECTORY__
+    runDotNet "run" automationPath)
 
 open Fake.Core.TargetOperators
 

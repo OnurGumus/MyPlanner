@@ -1,11 +1,26 @@
 module MyPlanner.Automation.Host
-open System.Reflection
 open TickSpec
 open canopy.configuration
 open canopy.types
 
 open canopy.classic
+open MyPlanner
+open Microsoft.Extensions.Configuration
+open MyPlanner.Shared
+open Microsoft.Extensions.Hosting
 
+let clientPath  = [(Constants.ClientPath,"../../deploy")] |> dict
+let configBuilder = 
+        Server.Program.configBuilder
+            .AddInMemoryCollection(clientPath)
+
+let config = configBuilder.Build()
+
+let mutable host : IHost = Unchecked.defaultof<_>
+
+let stopHost () =
+    if host <> null then 
+        host.Dispose()
 
 let startBrowser () =
     chromiumDir <- System.AppContext.BaseDirectory
@@ -24,7 +39,8 @@ let startBrowser () =
     positionBrowser 0 0 60 200
 
 let startHost appEnv =
-    let host = (MyPlanner.Server.Program.buildHost (fun _ -> appEnv))
+    host <- (Server.Program.buildHost configBuilder (fun _ -> appEnv))
     host.StartAsync(Unchecked.defaultof<_>) |> ignore
+    
            
         

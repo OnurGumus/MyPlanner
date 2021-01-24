@@ -9,14 +9,16 @@ open MyPlanner.Shared.Domain
 let ``there is 1 task on the system`` () = 
     let tasks =
         [ { Id = TaskId "1"; Version = version0 } ]
-    AppEnv([])
+    AppEnv(Host.config,[])
 
 
 [<When>]
 let ``I visit the start page`` ((appEnv: AppEnv)) = 
-    Host.startHost (AppEnv([]))
+    Host.startHost (AppEnv(Host.config,[]))
     Host.startBrowser()
-    url "http://localhost:5000"
+    url "http://localhost:8085"
 
 [<Then>]
-let ``I should be redirect to /tasks`` () = ()
+let ``I should be redirect to /tasks`` () = 
+    sleep 5
+    currentUrl() |> contains "tasks"

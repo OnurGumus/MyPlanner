@@ -5,7 +5,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const getBaseUrl = env => (env.baseUrl) ? `/${env.baseUrl}/` : "/";
-const isProduction = false;
+const isProduction = env => (env.production) ? true : false;
 // The HtmlWebpackPlugin allows us to use a template for the index.html page
 // and automatically injects <script> or <link> tags for generated bundles.
 var commonPlugins = env => [
@@ -25,7 +25,7 @@ var CONFIG = {
     indexHtmlTemplate: './src/MyPlanner.Client.View/index.html',
     fsharpEntry: './src/MyPlanner.Client.View/App.fs.js',
     cssEntry: './src/MyPlanner.Client.View/style.css',
-    outputDir: './src/MyPlanner.Client.View/deploy',
+    outputDir: './deploy',
     assetsDir: './src/MyPlanner.Client.View/public',
     devServerPort: 8080,
     // When using webpack-dev-server, you may need to redirect some calls
@@ -45,7 +45,7 @@ var CONFIG = {
 }
 
 module.exports = env => ({
-    entry: isProduction ? {
+    entry: (isProduction(env)) ? {
         app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.cssEntry)]
     } : {
             app: [resolve(CONFIG.fsharpEntry)],
@@ -57,8 +57,8 @@ module.exports = env => ({
         path: resolve(CONFIG.outputDir),
         filename: isProduction ? '[name].[hash].js' : '[name].js'
     },
-    mode: isProduction ? 'production' : 'development',
-    devtool: isProduction ? 'none' : 'eval-source-map',
+    mode: (isProduction(env))  ? 'production' : 'development',
+    devtool: (isProduction(env))  ? 'hidden-source-map' : 'eval-source-map',
     optimization: {
         splitChunks: {
             chunks: 'all'
@@ -74,10 +74,10 @@ module.exports = env => ({
     //      - CopyWebpackPlugin: Copies static assets to output directory
     // DEVELOPMENT
     //      - HotModuleReplacementPlugin: Enables hot reloading when code changes without refreshing
-    plugins: isProduction ?
+    plugins: (isProduction(env))  ?
         commonPlugins(env).concat([
             new MiniCssExtractPlugin({ filename: 'style.[hash].css' }),
-            new CopyWebpackPlugin([{ from: resolve(CONFIG.assetsDir) }]),
+            new CopyWebpackPlugin({ patterns : [ { from: resolve(CONFIG.assetsDir) }] }),
         ])
         : commonPlugins(env).concat([
             new webpack.HotModuleReplacementPlugin(),

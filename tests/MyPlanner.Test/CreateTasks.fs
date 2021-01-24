@@ -8,7 +8,7 @@ open Expecto
 open MyPlanner.Shared.Domain
 
 [<Given>]
-let ``there are no tasks in the system`` () = Environments.AppEnv([])
+let ``there are no tasks in the system`` () = Environments.AppEnv(null,[])
 
 
 [<When>]

@@ -11,18 +11,20 @@ open Serilog
 open Elmish
 open Elmish.Bridge
 open MyPlanner.Server
-open MyPlanner.Shared.Msg
-open MyPlanner.Shared.Domain
 open Query
 open MyPlanner.Shared
 open Hocon.Extensions.Configuration
 
-#if DEBUG
-let publicPath =
-    Path.GetFullPath "../MyPlanner.Client/deploy"
-#else
-let publicPath = Path.GetFullPath "./clientFiles"
-#endif
+
+
+
+let publicPath (env:#IConfiguration) =  Path.GetFullPath env.[Constants.ClientPath]
+// #if DEBUG
+// let publicPath =
+//     Path.GetFullPath "../MyPlanner.Client/deploy"
+// #else
+// let publicPath = Path.GetFullPath "./clientFiles"
+// #endif
 
 
 
@@ -51,26 +53,20 @@ let bridge env =
 
 let webApp env: HttpHandler =
     choose [ bridge env
-             GET >=> htmlFile (publicPath + "/index.html") ]
+             GET >=> htmlFile (publicPath env  + "/index.html") ]
 
-let root envFactory: HttpHandler =
+let root config envFactory: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
-        let configBuilder = ConfigurationBuilder()
-
-        let config =
-            configBuilder.AddHoconFile("config.hocon").Build() 
-
         let appEnv = envFactory config
-
         webApp appEnv next ctx
 
 
-let configureApp envFactory (app: IApplicationBuilder) =
+let configureApp config envFactory (app: IApplicationBuilder) =
     app
         .UseDefaultFiles()
         .UseStaticFiles()
         .UseWebSockets()
-        .UseGiraffe(root envFactory)
+        .UseGiraffe(root config envFactory)
 
 let configureServices (services: IServiceCollection) =
     services.AddGiraffe() |> ignore

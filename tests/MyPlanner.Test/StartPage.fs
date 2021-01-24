@@ -12,7 +12,7 @@ let ``there is 1 task on the system`` () =
     let tasks =
         [ { Id = TaskId "1"; Version = version0 } ]
 
-    Environments.AppEnv(tasks)
+    Environments.AppEnv(null,tasks)
 
 [<When>]
 let ``I visit the start page`` (appEnv: AppEnv) =

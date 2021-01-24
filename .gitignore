@@ -364,3 +364,4 @@ tests/MyPlanner.Test.CQRS/report
 *.fs.js
 *.db-shm
 *.db-wal
+deploy

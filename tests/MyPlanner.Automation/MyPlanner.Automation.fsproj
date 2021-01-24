@@ -10,6 +10,7 @@
     <Compile Include="StartPage.fs" />
     <Compile Include="Program.fs" />
     <EmbeddedResource Include="../../features/create-tasks.feature" />
+    <EmbeddedResource Include="../../features/start-page.feature" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyPlanner.Server\MyPlanner.Server.fsproj" />
