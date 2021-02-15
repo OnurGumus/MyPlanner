@@ -23,7 +23,7 @@ var CONFIG = {
     // The tags to include the generated JS and CSS will be automatically injected in the HTML template
     // See https://github.com/jantimon/html-webpack-plugin
     indexHtmlTemplate: './src/MyPlanner.Client.View/index.html',
-    fsharpEntry: './src/MyPlanner.Client.View/App.fs.js',
+    fsharpEntry: './src/MyPlanner.Client.View/fable-output/App.js',
     cssEntry: './src/MyPlanner.Client.View/style.css',
     outputDir: './deploy',
     assetsDir: './src/MyPlanner.Client.View/public',
@@ -55,7 +55,7 @@ module.exports = env => ({
     // to prevent browser caching if code changes
     output: {
         path: resolve(CONFIG.outputDir),
-        filename: isProduction ? '[name].[hash].js' : '[name].js'
+        filename: isProduction ? '[name].[chunkhash].js' : '[name].js'
     },
     mode: (isProduction(env))  ? 'production' : 'development',
     devtool: (isProduction(env))  ? 'hidden-source-map' : 'eval-source-map',
@@ -76,7 +76,7 @@ module.exports = env => ({
     //      - HotModuleReplacementPlugin: Enables hot reloading when code changes without refreshing
     plugins: (isProduction(env))  ?
         commonPlugins(env).concat([
-            new MiniCssExtractPlugin({ filename: 'style.[hash].css' }),
+            new MiniCssExtractPlugin({ filename: 'style.[chunkhash].css' }),
             new CopyWebpackPlugin({ patterns : [ { from: resolve(CONFIG.assetsDir) }] }),
         ])
         : commonPlugins(env).concat([

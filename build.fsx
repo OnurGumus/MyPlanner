@@ -145,7 +145,7 @@ Target.create
             async {
                 //let runTool = runTool Proc.run
                 //runTool yarnTool ("webpack-dev-server --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
-                runDotNet "fable watch ./src/MyPlanner.Client.View  --run yarn dev" __SOURCE_DIRECTORY__
+                runDotNet "fable watch ./src/MyPlanner.Client.View -o  ./src/MyPlanner.Client.View/fable-output --run yarn dev" __SOURCE_DIRECTORY__
             }
 
         let browser =
@@ -171,7 +171,7 @@ Target.create
         |> ignore)
 
 Target.create "RunAutomation" (fun _ -> 
-    runDotNet "fable  ./src/MyPlanner.Client.View  --run yarn prod" __SOURCE_DIRECTORY__
+    runDotNet "fable  ./src/MyPlanner.Client.View -o ./src/MyPlanner.Client.View/fable-output  --run yarn prod" __SOURCE_DIRECTORY__
     runDotNet "run" automationPath)
 
 open Fake.Core.TargetOperators

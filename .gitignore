@@ -365,3 +365,4 @@ tests/MyPlanner.Test.CQRS/report
 *.db-shm
 *.db-wal
 deploy
+src/MyPlanner.Client.View/fable-output
