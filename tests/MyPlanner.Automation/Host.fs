@@ -9,7 +9,7 @@ open Microsoft.Extensions.Configuration
 open MyPlanner.Shared
 open Microsoft.Extensions.Hosting
 
-let clientPath  = [(Constants.ClientPath,"../../deploy")] |> dict
+let clientPath  = [(Constants.ClientPath,"../../deploy/clientFiles")] |> dict
 let configBuilder = 
         Server.Program.configBuilder
             .AddInMemoryCollection(clientPath)

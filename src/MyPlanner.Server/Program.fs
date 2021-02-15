@@ -13,7 +13,12 @@ open MyPlanner.Server
 open Microsoft.Extensions.Configuration
 open Hocon.Extensions.Configuration
 open MyPlanner.Shared
-let clientPath  = [(Constants.ClientPath,"../MyPlanner.Client/deploy")] |> dict
+let clientPath  =
+#if DEBUG 
+   [(Constants.ClientPath,"../MyPlanner.Client.View/public")]  |> dict
+#else
+    [(Constants.ClientPath,"./clientFiles")] |> dict
+#endif
 let configBuilder =
     ConfigurationBuilder()
         .AddHoconFile(Constants.ConfigHocon)

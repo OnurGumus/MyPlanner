@@ -23,7 +23,20 @@ To run the application locally:
 dotnet fake build -t run
 ```
 
-To build a release version
+To build a release version:
 ```bash
 dotnet fake build --target BuildRelease
 ```
+then check the deploy folder
+
+
+To run automation tests:
+```bash
+dotnet fake build --target RunAutomation
+```
+
+To run CQRS tests:
+```bash
+dotnet fake build --target RunCQRS
+```
+

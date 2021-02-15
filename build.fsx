@@ -125,13 +125,10 @@ Target.create
             /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S70C10"
             serverTestPath)
 
-Target.create
-    "BuildRelease"
-    (fun _ ->
-        let runTool = runTool Proc.run
-        runTool yarnTool ("webpack-cli -p --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
-        printf "source: %A target:%A" clientDeployPath clientDeployReleasePath
-        Shell.copyDir clientDeployReleasePath clientDeployPath (fun _ -> true))
+Target.create "BuildRelease" (fun _ ->
+    let runTool = runTool Proc.run
+    runDotNet "fable ./src/MyPlanner.Client.View -o  ./src/MyPlanner.Client.View/fable-output  --run yarn prod" __SOURCE_DIRECTORY__
+)
 
 Target.create "WatchServer" (fun _ -> runDotNet "watch run" serverPath)
 
@@ -177,7 +174,7 @@ Target.create "RunAutomation" (fun _ ->
 open Fake.Core.TargetOperators
 
 "BuildServer" ==> "RunAutomation"
-
+"BuildServerOnlyRelease" ==> "BuildRelease"
 // ==> "InstallClient"
 // ==> "BuildServerOnly"
 // ==> "Build"
