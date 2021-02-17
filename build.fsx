@@ -126,7 +126,6 @@ Target.create
             serverTestPath)
 
 Target.create "BuildRelease" (fun _ ->
-    let runTool = runTool Proc.run
     runDotNet "fable ./src/MyPlanner.Client.View -o  ./src/MyPlanner.Client.View/fable-output  --run yarn prod" __SOURCE_DIRECTORY__
 )
 
@@ -142,7 +141,7 @@ Target.create
             async {
                 //let runTool = runTool Proc.run
                 //runTool yarnTool ("webpack-dev-server --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__
-                runDotNet "fable watch ./src/MyPlanner.Client.View -o  ./src/MyPlanner.Client.View/fable-output --run yarn dev" __SOURCE_DIRECTORY__
+                runDotNet "fable watch ./src/MyPlanner.Client.View -s -o ./src/MyPlanner.Client.View/fable-output --run yarn dev" __SOURCE_DIRECTORY__
             }
 
         let browser =

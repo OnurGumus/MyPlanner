@@ -95,6 +95,11 @@ module.exports = env => ({
     module: {
         rules: [
             {
+                test: /\.js$/,
+                enforce: "pre",
+                use: ["source-map-loader"],
+            },
+            {
                 test: /\.(sass|scss|css)$/,
                 use: [
                     isProduction(env)

@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "webpack serve --mode development --env development",
-    "prod" : "webpack  --mode production --env production"
+    "prod": "webpack  --mode production --env production"
   },
   "devDependencies": {
     "base-href-webpack-plugin": "^2.0.0",
@@ -13,6 +13,7 @@
     "remotedev": "^0.2.9",
     "resolve-url-loader": "^3.1.2",
     "sass-loader": "^10.1.1",
+    "source-map-loader": "^2.0.1",
     "style-loader": "^2.0.0",
     "webpack": "^5.15.0",
     "webpack-cli": "^4.3.1",
