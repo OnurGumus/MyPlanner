@@ -60,6 +60,7 @@ module.exports = env => ({
     mode: (isProduction(env))  ? 'production' : 'development',
     devtool: (isProduction(env))  ? 'hidden-source-map' : 'eval-source-map',
     optimization: {
+        runtimeChunk: 'single',
         splitChunks: {
             chunks: 'all'
         },
