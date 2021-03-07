@@ -4,8 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Main.fs" />
     <Compile Include="Navigation.fs" />
+    <Compile Include="Pages/Tasks.fs" />
+    <Compile Include="Main.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

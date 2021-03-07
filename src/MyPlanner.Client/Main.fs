@@ -1,8 +1,7 @@
 ﻿module MyPlanner.Client.Main
-
 open MyPlanner.Shared.Msg
 open Elmish
-
+open MyPlanner.Client.Pages
 type Route = Tasks
 
 type Page = Tasks of Tasks.Model option

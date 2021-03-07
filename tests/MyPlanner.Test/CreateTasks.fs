@@ -6,6 +6,7 @@ open MyPlanner.Test
 open MyPlanner.Client.Main
 open Expecto
 open MyPlanner.Shared.Domain
+open MyPlanner.Client.Pages
 
 [<Given>]
 let ``there are no tasks in the system`` () = Environments.AppEnv(null,[])

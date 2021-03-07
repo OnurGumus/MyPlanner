@@ -1,4 +1,4 @@
-module MyPlanner.Client.Tasks
+module MyPlanner.Client.Pages.Tasks
 
 open Elmish
 open MyPlanner.Shared.Domain
