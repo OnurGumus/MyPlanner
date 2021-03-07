@@ -7,6 +7,7 @@
     <Compile Include="Navigation.fs" />
     <Compile Include="Pages/Tasks.fs" />
     <Compile Include="Main.fs" />
+    <Compile Include="Elmish.Bridge.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

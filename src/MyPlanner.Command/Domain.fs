@@ -33,6 +33,8 @@ module Task =
                 Log.Debug("Message {@MSG}", box msg)
 
                 match msg, state with
+                | Recovering mailbox (Event { Event = TaskCreated t; Version = version }), _ ->
+                    return! (t |> Some, version) |> set
 
                 | Command { Command = (CreateTask t)
                             CorrelationId = ci },
@@ -84,6 +86,7 @@ let api (clock: IClock) (actorApi: IActor) =
     |> Log.Debug
 
     System.Threading.Thread.Sleep(1000)
+
     { new IDomain with
         member _.Clock = clock
         member _.ActorApi = actorApi

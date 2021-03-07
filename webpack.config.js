@@ -66,7 +66,7 @@ module.exports = env => ({
         },
         // NOTE: Toggle javascript minimized output
         //       Use if you want to debug the generated javascript code
-        // minimize: false
+        minimize: !(isProduction(env))
     },
     // Besides the HtmlPlugin, we use the following plugins:
     // PRODUCTION
@@ -90,7 +90,7 @@ module.exports = env => ({
         port: CONFIG.devServerPort,
         proxy: CONFIG.devServerProxy,
         hot: true,
-        inline: true,
+        inline:true,
         historyApiFallback: true
     },
     module: {

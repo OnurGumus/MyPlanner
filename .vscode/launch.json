@@ -1,0 +1,95 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "Debug Server",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build Server",
+            "program": "${workspaceFolder}/src/MyPlanner.Server/bin/Debug/net5.0/MyPlanner.Server.dll",
+            "cwd": "${workspaceFolder}/src/MyPlanner.Server",
+            "env": {
+                
+            },
+            "args": [],
+            "logging": {
+                "moduleLoad": false
+            },
+            "stopAtEntry": false,
+            "console": "internalConsole",
+        },
+        {
+            "name": "Debug Local Server",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build Server",
+            "program": "${workspaceFolder}/src/MyPlanner.Server/bin/Debug/net5.0/MyPlanner.Server.dll",
+            "cwd": "${workspaceFolder}/src/MyPlanner.Server",
+            "env": {
+            },
+            "args": [],
+            "logging": {
+                "moduleLoad": false
+            },
+            "stopAtEntry": false,
+            "console": "internalConsole",
+        },
+        {
+            "name": "Debug Test",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build Test",
+            "program": "${workspaceFolder}/tests/MyPlanner.Test/bin/Debug/net5.0/MyPlanner,Test.dll",
+            "args": [],
+            "justMyCode" : false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "stopAtEntry": false,
+            "console": "internalConsole",
+        },
+        {
+            "name": "Debug Client",
+            "type": "chrome",
+            "request": "launch",
+            "preLaunchTask": "Watch Client",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/src/MyPlanner.Client.View",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///*": "${workspaceFolder}/*",
+            }
+        },
+        {
+            "name": "Watch SAFE App",
+            "type": "chrome",
+            "request": "launch",
+            "preLaunchTask": "Watch Client and Server",
+            "url": "http://localhost:8080",
+            "env": {
+                "vsCodeSession":"true"
+            },
+            "webRoot": "${workspaceFolder}/src/MyPlanner.Client.View",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///*": "${workspaceFolder}/*",
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug SAFE App",
+            "configurations": [ "Debug Server", "Debug Client" ],
+        },
+        {
+            "name": "Debug (Local)",
+            "configurations": [ "Debug Local Server","Debug Client"],
+        }
+    ]
+}

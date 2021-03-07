@@ -55,18 +55,19 @@ let webApp env: HttpHandler =
     choose [ bridge env
              GET >=> htmlFile (publicPath env  + "/index.html") ]
 
-let root config envFactory: HttpHandler =
+let root     appEnv: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
-        let appEnv = envFactory config
+        
         webApp appEnv next ctx
 
 
 let configureApp config envFactory (app: IApplicationBuilder) =
+    let appEnv = envFactory config
     app
         .UseDefaultFiles()
         .UseStaticFiles()
         .UseWebSockets()
-        .UseGiraffe(root config envFactory)
+        .UseGiraffe(root appEnv)
 
 let configureServices (services: IServiceCollection) =
     services.AddGiraffe() |> ignore

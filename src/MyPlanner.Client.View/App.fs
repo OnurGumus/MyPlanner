@@ -1,7 +1,7 @@
 module MyPlanner.Client.View.App
 
 open Elmish
-open Elmish.Bridge
+open MyPlanner.Elmish.Bridge
 open Elmish.React
 open Elmish.Navigation
 open Elmish.UrlParser
@@ -16,7 +16,10 @@ open Elmish.HMR
 
 let inline bridgeSend msg = Bridge.Send msg
 
-let socketEndPoint = 
+printf "loading"
+
+
+let socketEndPoint =
     match baseUrl with
     | null
     | "" -> Constants.Socket_Endpoint
@@ -28,7 +31,7 @@ Program.mkProgram (Main.init newUrl Navigation.toPage bridgeSend) (Main.update b
 #endif
 |> Program.withBridgeConfig (
     Bridge.endpoint socketEndPoint
-    |> Bridge.withMapping (Main.mapClientMsg) 
+    |> Bridge.withMapping (Main.mapClientMsg)
     |> Bridge.withWhenDown Main.ServerDisconnected
 )
 |> Program.toNavigable (parsePath parseRoute) (Main.urlUpdate newUrl Navigation.toPage bridgeSend)
