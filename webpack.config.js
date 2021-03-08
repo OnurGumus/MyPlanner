@@ -83,6 +83,13 @@ module.exports = env => ({
         : commonPlugins(env).concat([
             new webpack.HotModuleReplacementPlugin(),
         ]),
+    resolve: {
+            // See https://github.com/fable-compiler/Fable/issues/1490
+            symlinks: false,
+            alias: {
+                './_Pages': path.resolve(__dirname, `src/MyPlanner.Client.View/Pages`),
+            },
+    },
     devServer: {
         publicPath: '/',
         contentBase: resolve(CONFIG.assetsDir),
