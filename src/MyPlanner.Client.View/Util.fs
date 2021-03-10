@@ -10,6 +10,8 @@ let reactShadowRoot props child =
 
 importAll "construct-style-sheets-polyfill"
 
+let dialogPolyfill : obj = import  "default" "dialog-polyfill"
+
 [<Global>]
 type CSSStyleSheet() = class end
 

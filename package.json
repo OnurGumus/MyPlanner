@@ -22,9 +22,11 @@
   },
   "dependencies": {
     "construct-style-sheets-polyfill": "^2.4.16",
+    "dialog-polyfill": "^0.5.6",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-shadow-dom-retarget-events": "^1.0.11",
     "react-shadow-root": "^5.0.4",
     "sass": "^1.32.4"
   }
