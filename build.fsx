@@ -129,6 +129,10 @@ Target.create "BuildRelease" (fun _ ->
     runDotNet "fable ./src/MyPlanner.Client.View -o  ./src/MyPlanner.Client.View/fable-output  --run yarn prod" __SOURCE_DIRECTORY__
 )
 
+Target.create "BuildDevClient" (fun _ ->
+    runDotNet "fable watch ./src/MyPlanner.Client.View -o  ./src/MyPlanner.Client.View/fable-output" __SOURCE_DIRECTORY__
+)
+
 Target.create "WatchServer" (fun _ -> runDotNet "watch run" serverPath)
 
 Target.create

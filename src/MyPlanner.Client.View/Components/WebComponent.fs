@@ -1,4 +1,4 @@
-module MyPlanner.Client.View.WebComponent
+module MyPlanner.Client.View.Components.WebComponent
 
     open Fable.Core
     open Browser.Types
