@@ -88,6 +88,7 @@ module.exports = env => ({
             symlinks: false,
             alias: {
                 './_Pages': path.resolve(__dirname, `src/MyPlanner.Client.View/Pages`),
+                './_Components': path.resolve(__dirname, `src/MyPlanner.Client.View/Components`),
             },
     },
     devServer: {

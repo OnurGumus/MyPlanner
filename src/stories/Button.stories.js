@@ -17,9 +17,8 @@ export default {
 const Template = (args) => <Button {...args} />;
 
 const Div = (args) =>
-    <modal-window visible onclose='alert(this.tagName)'>
-        <span slot="title"><button onclick="this.parentNode.parentNode.close()">Title Button</button></span>
-        <span slot="description">{args.label}</span>
+    <modal-window>
+        Onur
     </modal-window>
 
 export const Primary = Template.bind({});
