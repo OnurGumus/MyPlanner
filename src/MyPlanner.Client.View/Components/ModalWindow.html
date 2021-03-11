@@ -33,39 +33,9 @@
         min-width: 300px;
     }
 
-    .title {
-        font-size: 18px;
-    }
-
-    .button-container {
-        text-align: right;
-    }
-
-    button {
-        min-width: 80px;
-        background-color: #848e97;
-        border-color: #848e97;
-        border-style: solid;
-        border-radius: 2px;
-        padding: 3px;
-        color: white;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
 </style>
 <div class='wrapper'>
     <div class='modal'>
-        <span class='title'>We need to add a title here</span>
-        <div class='content'>
-            <slot></slot>
-        </div>
-        <div class='button-container'>
-            <button class='cancel'>Cancel</button>
-            <button class='ok'>Okay</button>
-        </div>
+        <slot></slot>
     </div>
 </div>

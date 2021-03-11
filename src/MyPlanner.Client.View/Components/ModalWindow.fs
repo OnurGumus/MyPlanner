@@ -29,46 +29,20 @@ let IS_ACTIVE = "is-active"
 let VISIBLE = "visible"
 
 // we are writing our component below
-[<AllowNullLiteral>]
+[<AllowNullLiteral;AttachMembers>]
 type ModalWindow() as this =
     inherit HTMLElement()
 
     let el : Browser.Types.HTMLElement = !!this
     let shadowRootRef : ShadowRoot = base.attachShadow {| mode = "open" |}
-    // see the html above. We use lazy because the dom element isn't available at this point.
-    let attachEventHandlers () =
-        let cancelButton = shadowRootRef.querySelector (".cancel")
-
-        cancelButton.addEventListener (
-            "click",
-            fun _ ->
-                el.dispatchEvent (CustomEvent.Create("cancel"))
-                |> ignore
-
-                el.removeAttribute ("visible")
-        )
-
-        let okButton = shadowRootRef.querySelector (".ok")
-
-        okButton.addEventListener (
-            "click",
-            fun _ ->
-                el.dispatchEvent (CustomEvent.Create("ok"))
-                |> ignore
-
-                el.removeAttribute ("visible")
-        )
-
     do
         //clone the html text and append to the child
         let clone = template.content.cloneNode true
         shadowRootRef.appendChild clone
-        attachEventHandlers ()
 
+    static member observedAttributes = [| VISIBLE |]
 
-    abstract isVisible : bool with get, set
-
-    override _.isVisible
+    member _.isVisible
         with get () = el.hasAttribute VISIBLE
         and set value =
             if value then
@@ -76,7 +50,7 @@ type ModalWindow() as this =
             else
                 el.removeAttribute VISIBLE
 
-    member this.render() =
+    member private this.render() =
         let wrapper = shadowRootRef.querySelector (".wrapper")
 
         if this.isVisible then
@@ -85,9 +59,6 @@ type ModalWindow() as this =
             wrapper.classList.remove "visible"
 
     override this.attributeChangedCallback(name, oldVal, newVal) = this.render ()
-
-
-attachStaticGetter<ModalWindow, _> observedAttributes (fun () -> [| VISIBLE |])
 
 if not (window?customElements?get TAG) then
     window?customElements?define (TAG, jsConstructor<ModalWindow>)

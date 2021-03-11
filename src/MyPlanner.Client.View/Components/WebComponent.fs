@@ -25,13 +25,6 @@ module MyPlanner.Client.View.Components.WebComponent
         member this.appendChild(el: Browser.Types.Node) = jsNative
         member this.querySelector(selector: string): Browser.Types.HTMLElement = jsNative
 
-    //Below two helpers works around fable limitation: No static members without name mangling
-    let inline attachStatic<'T> (name: string) (f: obj): unit = jsConstructor<'T>?name <- f
-
-    let inline attachStaticGetter<'T, 'V> (name: string) (f: unit -> 'V): unit =
-        JS.Constructors.Object.defineProperty (jsConstructor<'T>, name, !!{| get = f |})
-        |> ignore
-
     // The built in html element is missing below props so we use our own
     [<Global; AbstractClass>]
     [<AllowNullLiteral>]
