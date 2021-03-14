@@ -3,9 +3,9 @@ open MyPlanner.Client.Main
 
 open Feliz
 
-let view (model:Model) dispatch = 
+let view (model:Model) dispatch =
     match model.Page with
     | Some (Tasks (Some tasksModel )) ->
-        Pages.Tasks.view (TasksMsg >> dispatch) tasksModel 
+        Pages.Tasks.View (TasksMsg >> dispatch) tasksModel
 
     | _ -> Html.none
