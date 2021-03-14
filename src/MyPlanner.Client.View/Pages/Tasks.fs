@@ -19,42 +19,48 @@ let html : string =
 
 [<ReactComponent>]
 let View dispatch (model: Model) =
+    match model.Tasks with
+    | [] -> Html.none
+    | _ ->
 
-    let shadowRoot : HTMLElement Lazy =
-        lazy (!!document.querySelector("task-list")?shadowRoot)
+        let shadowRoot, setRootTag = React.useState (None)
+        let attachShadowRoot =
+            prop.ref
+                (fun x ->
+                    if x <> null && shadowRoot.IsNone then
+                        setRootTag (Some(x?attachShadow {|mode = "open"|})))
 
-    React.useLayoutEffect
-        (fun () ->
+        React.useEffect
+            (fun () ->
+                match shadowRoot with
+                | Some shadowRoot ->
+                    shadowRoot?innerHTML <- html
+                    let form : HTMLFormElement = !!shadowRoot?querySelector("form")
 
+                    let onSubmit (e: Event) =
+                        e.preventDefault ()
+                        shadowRoot?querySelector("#create-task-dialog")?isVisible <- false
 
-            let form : HTMLFormElement =
-                !!shadowRoot.Value.querySelector ("form")
+                    form.onsubmit <- onSubmit
+                 | _ ->()
+                )
 
-            let onSubmit (e: Event) =
-                e.preventDefault ()
-                shadowRoot.Value.querySelector("#create-task-dialog")?isVisible <- false
-
-            if form <> null then
-                form.onsubmit <- onSubmit)
-
-    let list =
-        Html.div [
-            prop.slot "task-list"
+        Interop.createElement "task-list" [
+            attachShadowRoot
             prop.children [
-
-                Html.button [
-                    prop.text "Create"
-                    prop.onClick (fun _ -> shadowRoot.Value.querySelector("#create-task-dialog")?isVisible <- true)
+                Html.div [
+                    prop.slot "task-list"
+                    prop.children [
+                        Html.button [
+                            prop.text "Create"
+                            prop.onClick (fun _ -> shadowRoot.Value?querySelector("#create-task-dialog")?isVisible <- true)
+                        ]
+                        Html.ol [
+                            for t in model.Tasks do
+                                Html.li [ prop.textf "%A" t ]
+                        ]
+                    ]
                 ]
-                Html.ol [
-                    for t in model.Tasks do
-                        Html.li [ prop.textf "%A" t ]
-                ]
-
-
-            ]
-
-
+             ]
         ]
 
-    loadHtmlInShadow html "" "task-list" [ list ]

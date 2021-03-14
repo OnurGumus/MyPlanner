@@ -24,8 +24,8 @@ let inline loadHtmlInShadow html style tag (slots: ReactElement list) =
         tag
         [
             reactShadowRoot {|stylesheets = [|sheet|]|} [
-
-                Html.span [prop.dangerouslySetInnerHTML (style + html)]
+                printf "in shadow";
+                yield Html.span [prop.dangerouslySetInnerHTML (style + html)]
             ]
             slots |> ofList
         ]
