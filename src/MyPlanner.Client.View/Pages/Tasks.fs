@@ -16,34 +16,30 @@ let html : string =
 
 [<ReactComponent>]
 let View dispatch (model: Model) =
-    match model.Tasks with
-    | [] -> Html.none
-    | _ ->
 
-        let attachShadowRoot, shadowRoot = Util.useShadowRoot(html)
+    let attachShadowRoot, shadowRoot = Util.useShadowRoot (html)
 
-        React.useEffect (
-            (fun () ->
-                match shadowRoot with
-                | Some shadowRoot ->
-                    shadowRoot.addEventListener ("TaskFromSubmitted", (fun e -> console.log e))
-                | _ -> ()),
-            [| shadowRoot |> box |]
-        )
+    React.useEffect (
+        (fun () ->
+            match shadowRoot with
+            | Some shadowRoot -> shadowRoot.addEventListener ("TaskFromSubmitted", (fun e -> console.log e))
+            | _ -> ()),
+        [| shadowRoot |> box |]
+    )
 
-        Interop.createElement
-            "task-list"
-            [
-                attachShadowRoot
-                prop.children [
-                    Html.div [
-                        prop.slot "task-list"
-                        prop.children [
-                            Html.ol [
-                                for t in model.Tasks do
-                                    Html.li [ prop.textf "%A" t ]
-                            ]
+    Interop.createElement
+        "task-list"
+        [
+            attachShadowRoot
+            prop.children [
+                Html.div [
+                    prop.slot "task-list"
+                    prop.children [
+                        Html.ol [
+                            for t in model.Tasks do
+                                Html.li [ prop.textf "%A" t ]
                         ]
                     ]
                 ]
             ]
+        ]
