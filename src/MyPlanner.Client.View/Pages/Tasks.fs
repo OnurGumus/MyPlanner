@@ -6,15 +6,13 @@ open MyPlanner.Shared.Domain
 open Feliz
 open Fable.Core.JsInterop
 open MyPlanner.Client.View.Components
-open Browser.Types
 open Browser.Dom
-
+open MyPlanner.Client.View
 
 ModalWindow.ensureDefined ()
 
 let html : string =
     importDefault ("!!raw-loader!./_Pages/Tasks.html")
-
 
 [<ReactComponent>]
 let View dispatch (model: Model) =
@@ -22,19 +20,12 @@ let View dispatch (model: Model) =
     | [] -> Html.none
     | _ ->
 
-        let (shadowRoot: HTMLElement option), setRootTag = React.useState (None)
-
-        let attachShadowRoot =
-            prop.ref
-                (fun x ->
-                    if x <> null && shadowRoot.IsNone then
-                        setRootTag (Some(x?attachShadow {| mode = "open" |})))
+        let attachShadowRoot, shadowRoot = Util.useShadowRoot(html)
 
         React.useEffect (
             (fun () ->
                 match shadowRoot with
                 | Some shadowRoot ->
-                    shadowRoot.innerHTML <- html
                     shadowRoot.addEventListener ("TaskFromSubmitted", (fun e -> console.log e))
                 | _ -> ()),
             [| shadowRoot |> box |]
