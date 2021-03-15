@@ -33,10 +33,8 @@ let useShadowRoot (html: string) =
 
     React.useEffect (
         (fun () ->
-            match shadowRoot with
-            | Some shadowRoot -> shadowRoot.innerHTML <- html
-            //shadowRoot.addEventListener ("TaskFromSubmitted", (fun e -> console.log e))
-            | _ -> ()),
+            shadowRoot
+            |> Option.iter (fun s -> s.innerHTML <- html)),
         [| shadowRoot |> box |]
     )
 
