@@ -18,12 +18,10 @@
         box-sizing: border-box;
     }
 
-    input:invalid {
-        box-shadow: 0 0 5px 1px red;
-    }
 
     input:focus:invalid {
-        box-shadow: none;
+        box-shadow: 0 0 5px 1px red;
+
     }
 </style>
 <section>
@@ -31,7 +29,10 @@
         Tasks
     </h1>
     <modal-window id="create-task-dialog">
-        <form>
+        <form onsubmit="
+                this.getRootNode().querySelector('#create-task-dialog').isVisible = false;
+                this.dispatchEvent(new CustomEvent('TaskFromSubmitted', { detail: new FormData(this), bubbles:true,composed:true }))
+                return false;">
             <p>
             <fieldset>
                 <legend>Do you have a driver's license?<abbr title="This field is mandatory"
@@ -55,7 +56,7 @@
             <p>
                 <label for="t1">What's your favorite fruit?<abbr title="This field is mandatory"
                         aria-label="required">*</abbr></label>
-                <input type="text" id="t1" name="fruit" list="l1" required
+                <input type="text" id="t1" name="fruit" list="l1" required placeholder=" "
                     pattern="[Bb]anana|[Cc]herry|[Aa]pple|[Ss]trawberry|[Ll]emon|[Oo]range">
                 <datalist id="l1">
                     <option>Banana</option>
@@ -79,6 +80,7 @@
             </p>
         </form>
     </modal-window>
+    <button onclick="this.getRootNode().querySelector('#create-task-dialog').isVisible = true">Create</button>
     <slot name="task-list">
         <ol>
             <li>Task 1</li>
