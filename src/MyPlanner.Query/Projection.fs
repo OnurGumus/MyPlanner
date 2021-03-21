@@ -59,7 +59,7 @@ let createTables (config: IConfiguration) =
         cmd.ExecuteNonQuery() |> ignore
 
         let tasks = "CREATE TABLE Tasks (
-                Id TEXT NOT NULL, Version INTEGER NOT NULL, Title TEXT NOT NULL, Description TET NOT NULL
+                Id TEXT NOT NULL, Version INTEGER NOT NULL, Title TEXT NOT NULL, Description TEXT NOT NULL,
                 CONSTRAINT Tasks_PK PRIMARY KEY (Id)
             )"
         cmd.CommandText <- tasks

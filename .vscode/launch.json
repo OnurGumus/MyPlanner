@@ -45,7 +45,21 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build Test",
-            "program": "${workspaceFolder}/tests/MyPlanner.Test/bin/Debug/net5.0/MyPlanner,Test.dll",
+            "program": "${workspaceFolder}/tests/MyPlanner.Test/bin/Debug/net5.0/MyPlanner.Test.dll",
+            "args": [],
+            "justMyCode" : false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "stopAtEntry": false,
+            "console": "internalConsole",
+        },
+        {
+            "name": "Debug CQRS",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build Test",
+            "program": "${workspaceFolder}/tests/MyPlanner.Test.CQRS/bin/Debug/net5.0/MyPlanner.Test.CQRS.dll",
             "args": [],
             "justMyCode" : false,
             "logging": {

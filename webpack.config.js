@@ -58,7 +58,7 @@ module.exports = env => ({
         filename: isProduction ? '[name].[chunkhash].js' : '[name].js'
     },
     mode: (isProduction(env))  ? 'production' : 'development',
-    devtool: (isProduction(env))  ? 'nosource-source-map' : 'eval-source-map',
+    devtool: (isProduction(env))  ? 'nosources-source-map' : 'eval-source-map',
     optimization: {
         runtimeChunk: 'single',
         splitChunks: {

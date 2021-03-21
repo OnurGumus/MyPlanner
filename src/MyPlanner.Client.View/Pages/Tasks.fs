@@ -53,9 +53,9 @@ let TasksView dispatch (model: Model) =
                 Html.div [
                     prop.slot "task-list"
                     prop.children [
-                        Html.ol [
+                        Html.ul [
                             for t in model.Tasks do
-                                Html.li [ prop.textf "%A" t ]
+                                Html.li [ prop.textf "%A-%A" t.Title t.Description ]
                         ]
                     ]
                 ]

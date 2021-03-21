@@ -9,14 +9,22 @@ open MyPlanner.Shared.Domain
 open MyPlanner.Client.Pages
 
 [<Given>]
-let ``there are no tasks in the system`` () = Environments.AppEnv(null,[])
+let ``there are no tasks in the system`` () = Environments.AppEnv(null, [])
 
 
 [<When>]
-let ``I create a task`` (appEnv: Environments.AppEnv) = 
+let ``I create a task`` (appEnv: Environments.AppEnv) =
 
-    let api = ElmishLoop.runWithDefaults appEnv (Some(Main.Route.Tasks)) ElmishLoop.defaultServerModel
-    api.ClientDispatcher (Msg.TasksMsg(Tasks.Msg.TaskCreationRequested {Id = TaskId "1" ; Version = version0}))
+    let api =
+        ElmishLoop.runWithDefaults appEnv (Some(Main.Route.Tasks)) ElmishLoop.defaultServerModel
+
+    let t =
+        { Id = "1" |> ShortString |> TaskId
+          Version = version0
+          Title = TaskTitle(ShortString "title")
+          Description = TaskDescription(LongString "desc") }
+
+    api.ClientDispatcher(Msg.TasksMsg(Tasks.Msg.TaskCreationRequested t))
     api
 
 
@@ -24,9 +32,10 @@ let ``I create a task`` (appEnv: Environments.AppEnv) =
 let ``the task should be created successfully`` () = ()
 
 [<When>]
-let ``I visit url /tasks`` (appEnv: Environments.AppEnv,api: ElmishLoop.API) =
+let ``I visit url /tasks`` (appEnv: Environments.AppEnv, api: ElmishLoop.API) =
     let api =
         ElmishLoop.runWithDefaults appEnv (Some(Main.Route.Tasks)) api.ServerModel
+
     System.Threading.Thread.Sleep 1000
     api
 

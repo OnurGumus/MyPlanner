@@ -10,7 +10,10 @@ open Expecto
 [<Given>]
 let ``there is 1 task on the system`` () =
     let tasks =
-        [ { Id = TaskId "1"; Version = version0 } ]
+        [   {       Id = "1" |> ShortString |> TaskId
+                    Version = version0; 
+                    Title = TaskTitle (ShortString "title"); 
+                    Description = TaskDescription (LongString "desc") } ]
 
     Environments.AppEnv(null,tasks)
 
