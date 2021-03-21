@@ -35,6 +35,7 @@ let urlUpdate newUrl toPage bridgeSend (result: Route option) (model: Model) =
     match result, model.Page with
     //we are already at tasks page, so no action required.
     | Some (Route.Tasks), Some (Tasks _) -> model, Cmd.none
+    //we were at some other page but now redirecting to tasks. redundant if we have only 1 page.
     | Some (Route.Tasks), Some _ -> initTask bridgeSend model
     //initial landing handled below
     | Some (Route.Tasks), None ->
@@ -51,11 +52,6 @@ let init newUrl toPage (bridgeSend: ClientToServer.Msg -> unit) (page: Route opt
         page
         { Page = None
           ConnectionStatus = Disconnected }
-
-let handleConnect bridgeSend model =
-    match model.Page with
-    | Some (Page.Tasks _) -> initTask bridgeSend model
-    | _ -> model, Cmd.none
 
 let update (bridgeSend: ClientToServer.Msg -> unit) newUrl toPage msg model =
     match msg, model with

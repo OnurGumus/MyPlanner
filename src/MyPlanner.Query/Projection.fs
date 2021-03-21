@@ -38,7 +38,9 @@ let createTables (config: IConfiguration) =
     let ctx =
         Sql.GetDataContext(
             config
-                .GetSection(Constants.ConnectionString)
+                .GetSection(
+                    Constants.ConnectionString
+                )
                 .Value
         )
 
@@ -57,7 +59,7 @@ let createTables (config: IConfiguration) =
         cmd.ExecuteNonQuery() |> ignore
 
         let tasks = "CREATE TABLE Tasks (
-                Id TEXT NOT NULL, Version INTEGER NOT NULL,
+                Id TEXT NOT NULL, Version INTEGER NOT NULL, Title TEXT NOT NULL, Description TET NOT NULL
                 CONSTRAINT Tasks_PK PRIMARY KEY (Id)
             )"
         cmd.CommandText <- tasks
@@ -77,7 +79,7 @@ let createTables (config: IConfiguration) =
             type ='table' AND
             name NOT LIKE 'sqlite_%'"
         cmd.CommandText <- list
-        let count: int64 = cmd.ExecuteScalar() :?> _
+        let count : int64 = cmd.ExecuteScalar() :?> _
         printf "%A count" count
         conn
     with ex ->
@@ -96,11 +98,14 @@ let handleEvent (connectionString: string) (envelop: EventEnvelope) =
         match envelop.Event with
         | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
             match taskEvent with
-            | Event ({ Event = Command.Domain.Task.TaskCreated task }) ->
+            | Event ({
+                         Event = Command.Domain.Task.TaskCreated task
+                     }) ->
                 let (Version v) = task.Version
-                let (TaskId tid) = task.Id
-                let row = ctx.Main.Tasks.Create(v)
-
+                let (TaskId (ShortString tid)) = task.Id
+                let (TaskTitle (ShortString title)) = task.Title
+                let (TaskDescription (LongString desc)) = task.Description
+                let row = ctx.Main.Tasks.Create(desc, title, v)
                 row.Id <- tid
             | _ -> ()
         | _ -> ()

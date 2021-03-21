@@ -24,8 +24,10 @@ let api (config: IConfiguration) actorApi =
 
             let res =
                 [ for task in tasks do
-                    { Id = (TaskId task.Id)
-                      Version = Version(task.Version) } ]
+                    { Id = (TaskId (ShortString task.Id))
+                      Version = Version(task.Version)
+                      Title = TaskTitle (ShortString task.Title)
+                      Description = TaskDescription(LongString task.Description) } ]
                 |> box
                 :?> list<'t>
 
