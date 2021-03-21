@@ -15,14 +15,14 @@ let html : string =
     importDefault ("!!raw-loader!./_Pages/Tasks.html")
 
 [<ReactComponent>]
-let View dispatch (model: Model) =
+let TasksView dispatch (model: Model) =
 
     let attachShadowRoot, shadowRoot = Util.useShadowRoot (html)
 
     React.useEffect (
         (fun () ->
             match shadowRoot with
-            | Some shadowRoot -> shadowRoot.addEventListener ("TaskFromSubmitted", (fun e -> console.log e))
+            | Some shadowRoot -> shadowRoot.addEventListener ("TaskFormSubmitted", (fun e -> console.log e))
             | _ -> ()),
         [| shadowRoot |> box |]
     )

@@ -6,6 +6,6 @@ open Feliz
 let view (model:Model) dispatch =
     match model.Page with
     | Some (Tasks (Some tasksModel )) ->
-        Pages.Tasks.View (TasksMsg >> dispatch) tasksModel
+        Pages.Tasks.TasksView (TasksMsg >> dispatch) tasksModel
 
     | _ -> Html.none

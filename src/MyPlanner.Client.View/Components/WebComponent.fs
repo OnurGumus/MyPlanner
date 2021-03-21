@@ -38,6 +38,12 @@ module MyPlanner.Client.View.Components.WebComponent
         abstract attributeChangedCallback: string * obj * obj -> unit
         default _.attributeChangedCallback(_, _, _) = ()
 
+    [<Global; AbstractClass>]
+    [<AllowNullLiteral>]
+    type HTMLButtonElement() = class
+        inherit HTMLElement()
+    end
+
     (* in your app add react-shadow-dom-retarget-events via yarn uncomment below code to make sure react components work fine
        then call it from your component with:  retargetEvents shadowRoot *)
     let retargetEvents: (ShadowRoot -> unit) =

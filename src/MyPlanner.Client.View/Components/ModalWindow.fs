@@ -62,5 +62,20 @@ type ModalWindow() as this =
 
 if not (window?customElements?get TAG) then
     window?customElements?define (TAG, jsConstructor<ModalWindow>)
+
+
+[<AllowNullLiteral;AttachMembers>]
+type FancyButton() as this =
+    inherit HTMLButtonElement()
+    let el : Browser.Types.HTMLElement = !!this
+    do
+        el.addEventListener("click", fun e -> el.innerHTML <- "I was clicked");
+
+
+if not (window?customElements?get "fancy-button") then
+    window?customElements?define ("fancy-button", jsConstructor<FancyButton>,{|extends = "button"|})
+
+
+
 // dummy function to ensure the above code is run
 let ensureDefined () = ()

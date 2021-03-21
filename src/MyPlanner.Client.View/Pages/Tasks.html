@@ -31,19 +31,9 @@
     <modal-window id="create-task-dialog">
         <form onsubmit="
                 this.getRootNode().querySelector('#create-task-dialog').isVisible = false;
-                this.dispatchEvent(new CustomEvent('TaskFromSubmitted', { detail: new FormData(this), bubbles:true,composed:true }))
+                this.dispatchEvent(new CustomEvent('TaskFormSubmitted', { detail: new FormData(this), bubbles:true,composed:true }))
                 return false;">
-            <p>
-            <fieldset>
-                <legend>Do you have a driver's license?<abbr title="This field is mandatory"
-                        aria-label="required">*</abbr></legend>
-                <!-- While only one radio button in a same-named group can be selected at a time,
-                     and therefore only one radio button in a same-named group having the "required"
-                     attribute suffices in making a selection a requirement -->
-                <input type="radio" required name="driver" id="r1" value="yes"><label for="r1">Yes</label>
-                <input type="radio" required name="driver" id="r2" value="no"><label for="r2">No</label>
-            </fieldset>
-            </p>
+
             <p>
                 <label for="n1">How old are you?</label>
                 <!-- The pattern attribute can act as a fallback for browsers which
@@ -51,7 +41,7 @@
                    Please note that browsers that support the pattern attribute will make it
                    fail silently when used with a number field.
                    Its usage here acts only as a fallback -->
-                <input type="number" min="12" max="120" step="1" id="n1" name="age" pattern="\d+">
+                <input type="text" name="age" pattern="\d+">
             </p>
             <p>
                 <label for="t1">What's your favorite fruit?<abbr title="This field is mandatory"
@@ -87,5 +77,5 @@
             <li>Task 2</li>
         </ol>
     </slot>
-
+<button is="fancy-button">Onur</button>
 </section>
