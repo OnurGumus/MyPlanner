@@ -15,7 +15,7 @@ let main _ =
         do
             let ass = Assembly.GetExecutingAssembly()
             let definitions = StepDefinitions(ass)
-            [ "create-tasks" ]
+            [ "create-tasks"; "start-page" ]
             |> Seq.iter
                 (fun source ->
                     let s =

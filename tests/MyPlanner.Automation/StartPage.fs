@@ -12,12 +12,12 @@ let ``there is 1 task on the system`` () =
               Version = version0
               Title = TaskTitle(ShortString.ofString "title")
               Description = TaskDescription(LongString.ofString "desc") }]
-    AppEnv(Host.config,[])
+    AppEnv(Host.config,tasks)
 
 
 [<When>]
 let ``I visit the start page`` ((appEnv: AppEnv)) = 
-    Host.startHost (AppEnv(Host.config,[]))
+    Host.startHost (appEnv)
     Host.startBrowser()
     url "http://localhost:8085"
 
