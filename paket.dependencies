@@ -34,6 +34,8 @@ nuget SQLitePCLRaw.core
 nuget Microsoft.Extensions.Configuration
 nuget Hocon.Extensions.Configuration
 nuget FSharp.Interop.Dynamic
+nuget Fable.Validation
+nuget Fable.Aether
 
 group Client
     source https://api.nuget.org/v3/index.json
@@ -46,6 +48,7 @@ group Client
     nuget Elmish.Bridge.Client
     nuget Fable.Elmish.Browser
     nuget Feliz
+    nuget Fable.Aether
 
 
 group Build

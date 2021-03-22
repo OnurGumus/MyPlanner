@@ -10,6 +10,7 @@ open Browser.Dom
 open MyPlanner.Client.View
 open System
 open Browser.Types
+open Fable
 
 ModalWindow.ensureDefined ()
 
@@ -18,10 +19,13 @@ let html : string =
 
 let createTaskFrom (formData: FormData) =
     {
-        Id = TaskId(ShortString(Guid.NewGuid().ToString()))
+        Id =
+            Guid.NewGuid().ToString()
+            |> ShortString.ofString
+            |> TaskId
         Version = version0
-        Title = TaskTitle(ShortString(!! formData.get "title"))
-        Description = TaskDescription(LongString(!! formData.get "title"))
+        Title = TaskTitle(ShortString.ofString (!! formData.get "title"))
+        Description = TaskDescription(LongString.ofString (!! formData.get "title"))
     }
 
 [<ReactComponent>]
@@ -55,7 +59,9 @@ let TasksView dispatch (model: Model) =
                     prop.children [
                         Html.ul [
                             for t in model.Tasks do
-                                Html.li [ prop.textf "%A-%A" t.Title t.Description ]
+                                Html.li [
+                                    prop.textf "%A-%A" t.Title t.Description
+                                ]
                         ]
                     ]
                 ]

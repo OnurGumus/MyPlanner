@@ -35,10 +35,10 @@ let ``there are no tasks in the system`` () =
 [<When>]
 let ``I create a task`` (api: IAPI) =
     api.CreateTask
-        { Id = "test_task" |> ShortString |> TaskId
+        { Id = "test_task" |> ShortString.ofString |> TaskId
           Version = version0
-          Title = TaskTitle(ShortString "title")
-          Description = TaskDescription(LongString "desc") }
+          Title = TaskTitle(ShortString.ofString "title")
+          Description = TaskDescription(LongString.ofString "desc") }
     |> Async.RunSynchronously
 
 [<Then>]

@@ -8,10 +8,10 @@ open MyPlanner.Shared.Domain
 [<Given>]
 let ``there is 1 task on the system`` () = 
     let tasks =
-        [ {   Id = "test_task" |> ShortString |> TaskId
+        [ {   Id = "test_task" |> ShortString.ofString |> TaskId
               Version = version0
-              Title = TaskTitle(ShortString "title")
-              Description = TaskDescription(LongString "desc") }]
+              Title = TaskTitle(ShortString.ofString "title")
+              Description = TaskDescription(LongString.ofString "desc") }]
     AppEnv(Host.config,[])
 
 

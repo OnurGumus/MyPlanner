@@ -19,10 +19,10 @@ let ``I create a task`` (appEnv: Environments.AppEnv) =
         ElmishLoop.runWithDefaults appEnv (Some(Main.Route.Tasks)) ElmishLoop.defaultServerModel
 
     let t =
-        { Id = "1" |> ShortString |> TaskId
+        { Id = "1" |> ShortString.ofString |> TaskId
           Version = version0
-          Title = TaskTitle(ShortString "title")
-          Description = TaskDescription(LongString "desc") }
+          Title = TaskTitle(ShortString.ofString "title")
+          Description = TaskDescription(LongString.ofString "desc") }
 
     api.ClientDispatcher(Msg.TasksMsg(Tasks.Msg.TaskCreationRequested t))
     api
