@@ -1,7 +1,11 @@
-﻿module MyPlanner.Shared.Domain
+﻿[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+module MyPlanner.Shared.Domain
 
 open Fable.Validation.Core
 
+#if !FABLE
+open Newtonsoft.Json
+#endif
 [<AutoOpen>]
 module Common =
 
@@ -10,6 +14,9 @@ module Common =
         | Ok r -> r
         | Error (e: string list) -> invalidOp (System.String.Join(",", e))
 
+#if !FABLE
+    [<JsonObject(MemberSerialization = MemberSerialization.Fields)>]
+#endif
     type ShortString = private ShortString of string
 
     module ShortString =
@@ -35,6 +42,9 @@ module Common =
 
     let (|ShortString|) (ShortString str) = str
 
+#if !FABLE
+    [<JsonObject(MemberSerialization = MemberSerialization.Fields)>]
+#endif
     type LongString = private LongString of string
 
     module LongString =
