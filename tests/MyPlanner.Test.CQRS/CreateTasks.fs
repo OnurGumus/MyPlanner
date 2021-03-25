@@ -37,15 +37,8 @@ let ``there are no tasks in the system`` () =
 [<When>]
 let ``I create a task`` (api: IAPI, (qapi : MyPlanner.Query.API.IAPI)) =
     let tasks = ResizeArray()
-    let sink = 
-        Sink.forEach (fun x -> tasks.Add(x))
-    let k,_ = 
-        qapi.Source 
-        |> Source.viaMat KillSwitch.single Keep.right 
-        |> Source.toMat (sink) Keep.both
-        |> Graph.run api.ActorApi.Materializer
-
-    
+   
+    qapi.Subscribe(fun x-> tasks.Add x) |> ignore
     api.CreateTask
         { Id = "test_task" |> ShortString.ofString |> TaskId
           Version = version0

@@ -10,11 +10,7 @@ open Akka.Streams
 
 let cmdOfSub v = Cmd.ofSub (fun _ -> v)
 
-let subscribeToStream source mat sink =
-    source
-    |> Source.viaMat KillSwitch.single Keep.right
-    |> Source.toMat (sink) Keep.both
-    |> Graph.run mat
+
 
 module Tasks =
     type Model = Task list
@@ -23,20 +19,14 @@ module Tasks =
         | TasksFetched of Task list
         | TaskCreateCompleted of Result<Task, string>
         | TasksMsg of ClientToServer.TasksMsg
-        | SubscribedToStream of UniqueKillSwitch
+        | SubscribedToStream of IKillSwitch
         | DataEventOccurred of MyPlanner.Query.Projection.DataEvent
 
+
     let subscribeCmd (env: #IQuery) =
-        Cmd.ofSub
-            (fun dispatcher ->
-                let sink =
-                    Sink.forEach (fun event -> dispatcher (DataEventOccurred event))
-
-                let ks, _ =
-                    subscribeToStream env.Source env.Mat sink
-
-                dispatcher (SubscribedToStream ks))
-
+        Cmd.ofSub(fun dispatcher ->
+            let ks  = env.Subscribe ((fun event -> dispatcher (DataEventOccurred event)))
+            dispatcher (SubscribedToStream ks))
 
     let fetchTasksCmd (env: #IQuery) =
         Cmd.OfAsync.perform env.Query<Task> () TasksFetched
