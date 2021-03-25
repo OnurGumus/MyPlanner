@@ -10,6 +10,7 @@ open Akkling
 open Expecto
 open Microsoft.Extensions.Configuration
 open Hocon.Extensions.Configuration
+open Akkling.Streams
 
 
 [<Given>]
@@ -33,7 +34,17 @@ let ``there are no tasks in the system`` () =
 
 
 [<When>]
-let ``I create a task`` (api: IAPI) =
+let ``I create a task`` (api: IAPI, (qapi : MyPlanner.Query.API.IAPI)) =
+    let sink = 
+        Sink.forEach (fun x -> 
+            printf "onurrr %A" x)
+    let k,_ = 
+        qapi.Source 
+        |> Source.viaMat  KillSwitch.single Keep.right 
+        |> Source.toMat (sink) Keep.both
+        |> Graph.run api.ActorApi.Materializer
+
+    
     api.CreateTask
         { Id = "test_task" |> ShortString.ofString |> TaskId
           Version = version0

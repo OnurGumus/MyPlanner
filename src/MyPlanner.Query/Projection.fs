@@ -11,6 +11,9 @@ open FSharp.Data.Sql
 open FSharp.Data.Sql.Common
 open Microsoft.Extensions.Configuration
 open MyPlanner.Shared
+open Akkling.Streams
+open Akka.Streams
+open Akka.Streams.Dsl
 
 [<Literal>]
 #if _VS
@@ -86,15 +89,18 @@ let createTables (config: IConfiguration) =
         printf "%A" ex
         conn
 
+type TaskEvent = TaskCreated of Task
+
+
 
 QueryEvents.SqlQueryEvent
 |> Event.add (fun sql -> Log.Debug("Executing SQL: {SQL}", sql))
 
-let handleEvent (connectionString: string) (envelop: EventEnvelope) =
+let handleEvent (connectionString: string) (subQueue: ISourceQueue<_>) (envelop: EventEnvelope) =
     let ctx = Sql.GetDataContext(connectionString)
     Log.Information("Handle event {@Envelope}", envelop)
 
-    try
+    let task =
         match envelop.Event with
         | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
             match taskEvent with
@@ -107,13 +113,19 @@ let handleEvent (connectionString: string) (envelop: EventEnvelope) =
                 let (TaskDescription (LongString desc)) = task.Description
                 let row = ctx.Main.Tasks.Create(desc, title, v)
                 row.Id <- tid
-            | _ -> ()
-        | _ -> ()
+                Some task
+            | _ -> None
+        | _ -> None
 
-        ctx.Main.Offsets.Individuals.Tasks.OffsetCount <- (envelop.Offset :?> Sequence).Value
-        ctx.SubmitUpdates()
+    ctx.Main.Offsets.Individuals.Tasks.OffsetCount <- (envelop.Offset :?> Sequence).Value
+    ctx.SubmitUpdates()
 
-    with e -> printf "%A" e
+    match task with
+    | Some task -> subQueue.OfferAsync(task).Wait()
+    | _ -> ()
+
+
+
 
 
 open Akkling.Streams
@@ -138,9 +150,22 @@ let init (connectionString: string) (actorApi: IActor) =
 
     System.Threading.Thread.Sleep(100)
 
+    let subQueue =
+        Source.queue OverflowStrategy.Backpressure 256
+
+    let subSink = (Sink.broadcastHub 256)
+
+    let runnableGraph =
+        subQueue |> Source.toMat subSink Keep.both
+
+    let queue, subRunnable =
+        runnableGraph |> Graph.run (actorApi.Materializer)
+
     source
-    |> Source.runForEach actorApi.Materializer (handleEvent connectionString)
+    |> Source.runForEach actorApi.Materializer (handleEvent connectionString queue)
     |> Async.StartAsTask
     |> ignore
 
     System.Threading.Thread.Sleep(1000)
+
+    subRunnable
