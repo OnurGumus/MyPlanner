@@ -25,7 +25,7 @@ let createTaskFrom (formData: FormData) =
             |> TaskId
         Version = version0
         Title = TaskTitle(ShortString.ofString (!! formData.get "title"))
-        Description = TaskDescription(LongString.ofString (!! formData.get "title"))
+        Description = TaskDescription(LongString.ofString (!! formData.get "description"))
     }
 
 [<ReactComponent>]
