@@ -6,11 +6,13 @@ open Microsoft.Extensions.Configuration
 open MyPlanner.Shared
 open Akka.Streams.Dsl
 open Akka.Persistence.Query
+open Akka.Streams
 
 [<Interface>]
 type IAPI =
     abstract Query<'t> : ?filter:string * ?orderby:string * ?thenby:string * ?take:int * ?skip:int -> list<'t> Async
-    abstract Source : Source<Task,unit>
+    abstract Source : Source<DataEvent,unit>
+    abstract Materializer : IMaterializer
 
 let api (config: IConfiguration) actorApi =
     let connString =
@@ -21,6 +23,7 @@ let api (config: IConfiguration) actorApi =
     let source = Projection.init connString actorApi
 
     { new IAPI with
+        override this.Materializer = actorApi.Materializer :> _
         override this.Source = source
         override this.Query(?filter, ?orderby, ?thenby, ?take, ?skip): Async<'t list> =
             let ctx = Sql.GetDataContext(connString)

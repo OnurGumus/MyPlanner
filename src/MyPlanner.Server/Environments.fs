@@ -25,6 +25,8 @@ type AppEnv(config: IConfiguration) =
     interface IQuery with
         member _.Query(?filter, ?orderby, ?thenby, ?take, ?skip) =
             queryApi.Query(?filter = filter, ?orderby = orderby, ?thenby = thenby, ?take = take, ?skip = skip)
+        member _.Source = queryApi.Source
+        member _.Mat = queryApi.Materializer
 
     interface ITaskCommand with
         member _.CreateTask = commandApi.CreateTask

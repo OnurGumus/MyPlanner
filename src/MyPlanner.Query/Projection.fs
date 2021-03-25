@@ -90,7 +90,7 @@ let createTables (config: IConfiguration) =
         conn
 
 type TaskEvent = TaskCreated of Task
-
+type DataEvent = TaskEvent of TaskEvent
 
 
 QueryEvents.SqlQueryEvent
@@ -100,7 +100,7 @@ let handleEvent (connectionString: string) (subQueue: ISourceQueue<_>) (envelop:
     let ctx = Sql.GetDataContext(connectionString)
     Log.Information("Handle event {@Envelope}", envelop)
 
-    let task =
+    let dataEvent =
         match envelop.Event with
         | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
             match taskEvent with
@@ -113,15 +113,15 @@ let handleEvent (connectionString: string) (subQueue: ISourceQueue<_>) (envelop:
                 let (TaskDescription (LongString desc)) = task.Description
                 let row = ctx.Main.Tasks.Create(desc, title, v)
                 row.Id <- tid
-                Some task
+                Some (TaskEvent (TaskCreated task))
             | _ -> None
         | _ -> None
 
     ctx.Main.Offsets.Individuals.Tasks.OffsetCount <- (envelop.Offset :?> Sequence).Value
     ctx.SubmitUpdates()
 
-    match task with
-    | Some task -> subQueue.OfferAsync(task).Wait()
+    match dataEvent with
+    | Some dataEvent -> subQueue.OfferAsync(dataEvent).Wait()
     | _ -> ()
 
 

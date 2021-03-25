@@ -41,7 +41,7 @@ let ``I create a task`` (api: IAPI, (qapi : MyPlanner.Query.API.IAPI)) =
         Sink.forEach (fun x -> tasks.Add(x))
     let k,_ = 
         qapi.Source 
-        |> Source.viaMat  KillSwitch.single Keep.right 
+        |> Source.viaMat KillSwitch.single Keep.right 
         |> Source.toMat (sink) Keep.both
         |> Graph.run api.ActorApi.Materializer
 
