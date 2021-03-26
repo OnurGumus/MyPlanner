@@ -31,7 +31,8 @@
     <modal-window id="create-task-dialog">
         <form onsubmit="
                 this.getRootNode().querySelector('#create-task-dialog').isVisible = false;
-                this.dispatchEvent(new CustomEvent('TaskFormSubmitted', {bubbles:true, composed:true, detail: new FormData(this) }))
+                this.dispatchEvent(new CustomEvent('TaskFormSubmitted', {bubbles:true, composed:true, detail: new FormData(this) }));
+                this.reset();
                 return false;">
 
             <p>
