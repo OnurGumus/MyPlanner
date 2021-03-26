@@ -46,7 +46,6 @@ let publicPath (env:#IConfiguration) =  Path.GetFullPath env.[Constants.ClientPa
 
 
 
-
 let bridge env =
     Bridge.mkServer Constants.Socket_Endpoint State.init (State.update env)
     |> Bridge.run Giraffe.server
@@ -57,7 +56,7 @@ let webApp env: HttpHandler =
 
 let root     appEnv: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
-        
+
         webApp appEnv next ctx
 
 

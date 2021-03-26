@@ -8,7 +8,7 @@ open MyPlanner.Server.State
 open MyPlanner.Server
 open MyPlanner.Shared.Domain
 
-let defaultServerModel = ref Unchecked.defaultof<Task list>
+let defaultServerModel = ref  (Unchecked.defaultof<State.Model>)
 
 let run
     initPage
@@ -113,7 +113,7 @@ let dispatchHelper clientDispatcher parent msg =
 
 type API =
     { ClientModel: Main.Model ref
-      ServerModel: Task list ref
+      ServerModel: State.Model ref
       ClientDispatcher: Dispatch<Main.Msg>
       NewUrl: Main.Route option * bool -> unit
       AppEnv: MyPlanner.Test.Environments.AppEnv }

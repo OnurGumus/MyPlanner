@@ -14,6 +14,7 @@
             "preLaunchTask": "Build Server",
             "program": "${workspaceFolder}/src/MyPlanner.Server/bin/Debug/net5.0/MyPlanner.Server.dll",
             "cwd": "${workspaceFolder}/src/MyPlanner.Server",
+            "justMyCode" : false,
             "env": {
                 
             },
@@ -47,7 +48,7 @@
             "preLaunchTask": "Build Test",
             "program": "${workspaceFolder}/tests/MyPlanner.Test/bin/Debug/net5.0/MyPlanner.Test.dll",
             "args": [],
-            "justMyCode" : false,
+            "justMyCode" : true,
             "logging": {
                 "moduleLoad": false
             },

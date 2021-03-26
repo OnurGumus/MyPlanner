@@ -13,7 +13,19 @@ let cmdOfSub v = Cmd.ofSub (fun _ -> v)
 
 
 module Tasks =
-    type Model = Task list
+    open MyPlanner.Query.Projection
+
+    type Mode =
+        | Acumulating
+        | Streaming
+
+    type Model =
+        {
+            Tasks: Task list
+            KillSwitch: IKillSwitch option
+            AccumulatedEvents: TaskEvent list
+            Mode: Mode
+        }
 
     type Msg =
         | TasksFetched of Task list
@@ -24,9 +36,12 @@ module Tasks =
 
 
     let subscribeCmd (env: #IQuery) =
-        Cmd.ofSub(fun dispatcher ->
-            let ks  = env.Subscribe ((fun event -> dispatcher (DataEventOccurred event)))
-            dispatcher (SubscribedToStream ks))
+        Cmd.ofSub
+            (fun dispatcher ->
+                let ks =
+                    env.Subscribe((fun event -> dispatcher (DataEventOccurred event)))
+
+                dispatcher (SubscribedToStream ks))
 
     let fetchTasksCmd (env: #IQuery) =
         Cmd.OfAsync.perform env.Query<Task> () TasksFetched
@@ -34,49 +49,88 @@ module Tasks =
     let creteTask (env: #ITaskCommand) task =
         Cmd.OfAsync.perform env.CreateTask task TaskCreateCompleted
 
+    let init =
+        {
+            Tasks = []
+            KillSwitch = None
+            AccumulatedEvents = []
+            Mode = Acumulating
+        },
+        Cmd.none
+
     let update env clientDispatch (msg: Msg) (state: Model) =
-        match msg with
-        | TasksMsg (ClientToServer.TasksRequested) ->
-            let q = subscribeCmd env
-            let f = fetchTasksCmd env
-            state, Cmd.batch [ q; f ]
-        | TasksMsg (ClientToServer.TaskCreationRequested task) -> state, creteTask env task
-        | DataEventOccurred (MyPlanner.Query.Projection.TaskEvent (MyPlanner.Query.Projection.TaskCreated task)) ->
+        match msg, state with
+
+        | TasksMsg (ClientToServer.TasksRequested), { Mode = Streaming } ->
+            { state with Mode = Acumulating }, fetchTasksCmd env
+
+        | TasksMsg (ClientToServer.TasksRequested), _ ->  state, subscribeCmd env
+
+        | TasksMsg (ClientToServer.TaskCreationRequested task), _ -> state, creteTask env task
+
+        | DataEventOccurred (TaskEvent event), { Mode = Acumulating } ->
+            { state with
+                AccumulatedEvents = state.AccumulatedEvents @ [ event ]
+            },
+            Cmd.none
+        | DataEventOccurred (TaskEvent (TaskCreated task)), _ ->
             state,
             task
             |> ServerToClient.TaskCreated
             |> clientDispatch
             |> cmdOfSub
-        | TaskCreateCompleted task ->
+
+        | TaskCreateCompleted task, _ ->
             state,
             task
             |> ServerToClient.TaskCreateCompleted
             |> clientDispatch
             |> cmdOfSub
-        | TasksFetched tasks ->
-            state,
+
+        | TasksFetched tasks, _ ->
+            let tasks =
+                [
+                    for (TaskCreated t) in state.AccumulatedEvents do
+                        yield t
+                    yield! tasks
+                ]
+
+            { state with
+                Tasks = tasks
+                Mode = Streaming
+                AccumulatedEvents = []
+            },
             tasks
             |> ServerToClient.TasksFetched
             |> clientDispatch
             |> cmdOfSub
+
+        | SubscribedToStream ks, _ -> { state with KillSwitch = Some ks }, fetchTasksCmd env
+
+    let dispose (state: Model) =
+        match state.KillSwitch with
+        | Some ks -> state, Cmd.ofSub (fun _ -> ks.Shutdown())
         | _ -> state, Cmd.none
+
 
 type ServerMsg =
     | Remote of ClientToServer.Msg
     | TasksMsg of Tasks.Msg
 
+type Model = Tasks of Tasks.Model
 
 let init dispatch () =
     dispatch ServerToClient.ServerConnected
-    ([]: Task list), Cmd.none
+    let tasksModel, cmd = Tasks.init
+    (Tasks tasksModel), Cmd.map TasksMsg cmd
 
-let rec update env clientDispatch msg state =
+let rec update env clientDispatch msg (state : Model) =
     match msg, state with
-    | TasksMsg m, _ ->
+    | TasksMsg m, Tasks state ->
         let state, cmd =
             Tasks.update env (ServerToClient.TasksMsg >> clientDispatch) m state
 
-        state, Cmd.map TasksMsg cmd
+        Tasks state, Cmd.map TasksMsg cmd
 
     | Remote (ClientToServer.TasksMsg tasksMsg), _ ->
         //client to server message transformation
