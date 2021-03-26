@@ -17,7 +17,6 @@ let getTasks bridgeSend =
     Cmd.ofSub
         (fun _ ->
             async {
-                do! Async.Sleep 1000
                 bridgeSend (ClientToServer.TasksRequested)
             }
             |> Async.StartImmediate)
@@ -28,6 +27,7 @@ let update bridgeSend msg model =
     match msg with
     | Remote (ServerToClient.TasksFetched tasks) -> { model with Tasks = tasks }, Cmd.none
     | Remote (ServerToClient.TaskCreateCompleted (Ok _)) -> model, getTasks bridgeSend
+    | Remote (ServerToClient.TaskCreated t) -> { model with Tasks = t :: model.Tasks} , Cmd.none
     | TaskCreationRequested task -> model, createTaskCmd bridgeSend task
     | _ -> model, Cmd.none
 

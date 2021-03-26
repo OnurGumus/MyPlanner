@@ -406,9 +406,6 @@ module DynamicConfig =
         /// <summary>
         /// An extension method that returns given string as an dynamic Expando object
         /// </summary>
-        /// <param name="configuration">configuration to be searched</param>
-        /// <param name="maxSize">section to be retrieved</param>
-        /// <returns>An expando object represents given section</returns>
         /// <exception cref="System.ArgumentNullException">Thrown configuration or section is null</exception>
         [<Extension>]
 
@@ -441,8 +438,6 @@ module DynamicConfig =
         /// <summary>
         /// An extension method that returns given string as an dynamic Expando object
         /// </summary>
-        /// <param name="configuration">configuration to be searched</param>
-        /// <param name="maxSize">section to be retrieved</param>
         /// <returns>An expando object represents given section</returns>
         /// <exception cref="System.ArgumentNullException">Thrown configuration is null</exception>
         [<Extension>]
