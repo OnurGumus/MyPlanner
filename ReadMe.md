@@ -42,3 +42,7 @@ To run CQRS tests:
 dotnet fake build --target RunCQRS
 ```
 
+To run Client/Server tests:
+```bash
+dotnet fake build --target RunTests
+```
