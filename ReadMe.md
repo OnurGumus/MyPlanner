@@ -9,7 +9,7 @@ You'll need to install the following pre-requisites in order to build SAFE appli
 
 ## Work with the application
 
-[demo](myplanner.gif)
+![demo](myplanner.gif)
 
 Before you run the project **for the first time only** you should install its local tools with this command:
 
