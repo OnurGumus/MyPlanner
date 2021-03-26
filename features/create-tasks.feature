@@ -2,7 +2,7 @@ Feature: Create tasks
 
 As a I user I would like to create tasks.
 
-Scenario: _Create a task
+Scenario: Create a task
 Given there are no tasks in the system
 When I create a task
 Then the task should be created successfully

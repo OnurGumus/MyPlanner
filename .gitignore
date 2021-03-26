@@ -360,7 +360,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-tests/MyPlanner.Test.CQRS/report
+tests/MyPlanner.Test.CQRS/report*
+tests/MyPlanner.Test/report*
 *.fs.js
 *.db-shm
 *.db-wal

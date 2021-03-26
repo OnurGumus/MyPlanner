@@ -111,7 +111,7 @@ Target.create
             /p:AltCoverForce=true /p:AltCoverLocalSource=true \
             /p:AltCoverAssemblyFilter=\"\.Test\" \
             /p:AltCoverVisibleBranches=true \
-            /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S85C15"
+            /p:AltCoverTypeFilter=\"StartupCode|@\" /p:AltCoverThreshold=S85C15"
             cqrsServerTestPath)
 
 Target.create
@@ -122,7 +122,7 @@ Target.create
             /p:AltCoverForce=true /p:AltCoverLocalSource=true \
             /p:AltCoverAssemblyFilter=\"\.Test|\.Command|\.Query\" \
             /p:AltCoverVisibleBranches=true \
-            /p:AltCoverTypeFilter=\"StartupCode\" /p:AltCoverThreshold=S70C10"
+            /p:AltCoverTypeFilter=\"StartupCode|@\" /p:AltCoverThreshold=S70C10"
             serverTestPath)
 
 Target.create "BuildRelease" (fun _ ->
