@@ -9,7 +9,7 @@
       ]
     },
     "fake-cli": {
-      "version": "5.20.4-alpha.1642",
+      "version": "5.20.4",
       "commands": [
         "fake"
       ]
@@ -27,7 +27,7 @@
       ]
     },
     "fable": {
-      "version": "3.1.11",
+      "version": "3.1.15",
       "commands": [
         "fable"
       ]

@@ -2,8 +2,15 @@ Feature: Start page
 
 As a I user I would like to visit the start page
 
-Scenario: Visit start page
-Given there is 1 task on the system
+Scenario: Not logged in
+Given I am not logged in
 When I visit the start page
-Then I should be redirect to /tasks
-And I should see 1 task(s) listed
+Then I should be redirect to signin page
+
+
+# Scenario: Click to Signup
+# Given I am not logged in
+# When I visit the login page
+# And I click to signup link
+# Then I should be at signup page
+

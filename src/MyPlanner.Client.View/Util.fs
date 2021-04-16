@@ -6,23 +6,23 @@ open Fable.React.Helpers
 open Fable.Core.JsInterop
 open Browser.Types
 
-let reactShadowRoot props child =
-    ofImport "default" "react-shadow-root" props child
-
-importAll "construct-style-sheets-polyfill"
-
-let dialogPolyfill : obj = import "default" "dialog-polyfill"
-
 [<Global>]
 type CSSStyleSheet() =
     class
     end
 
-let sheet = new CSSStyleSheet()
-sheet?replaceSync ("h1 { color: red; }")
-Browser.Dom.document?adoptedStyleSheets <- [| sheet |]
+let createSheet css =
+    let sheet = new CSSStyleSheet()
+    sheet?replaceSync (css)
+    sheet
 
 let useShadowRoot (html: string) =
+
+    let html =
+        match html.IndexOf "</head>" with
+        | -1 -> html
+        | index -> html.Substring(index + 7)
+
     let (shadowRoot: HTMLElement option), setRootTag = React.useState (None)
 
     let attachShadowRoot =

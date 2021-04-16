@@ -13,7 +13,6 @@
     <Content Include="./config.hocon">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="../../features/create-tasks.feature" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyPlanner.Command\MyPlanner.Command.fsproj" />

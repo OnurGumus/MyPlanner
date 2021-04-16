@@ -36,8 +36,7 @@
                 return false;">
 
             <p>
-                <label for="title">Title<abbr title="This field is mandatory"
-                    aria-label="required">*</abbr></label>
+                <label for="title">Title<abbr title="This field is mandatory" aria-label="required">*</abbr></label>
                 <input type="text" name="title" required maxlength="200">
             </p>
             <p>
@@ -50,12 +49,12 @@
             </p>
         </form>
     </modal-window>
-    <button id="create-button" onclick="this.getRootNode().querySelector('#create-task-dialog').isVisible = true">Create</button>
+    <button id="create-button"
+        onclick="this.getRootNode().querySelector('#create-task-dialog').isVisible = true">Create</button>
     <slot name="task-list">
         <ol>
             <li>Task 1</li>
             <li>Task 2</li>
         </ol>
     </slot>
-    <!-- <button is="fancy-button">Onur</button> -->
 </section>

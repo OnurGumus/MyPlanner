@@ -64,7 +64,7 @@ module Tasks =
         | TasksMsg (ClientToServer.TasksRequested), { Mode = Streaming } ->
             { state with Mode = Acumulating }, fetchTasksCmd env
 
-        | TasksMsg (ClientToServer.TasksRequested), _ ->  state, subscribeCmd env
+        | TasksMsg (ClientToServer.TasksRequested), _ -> state, subscribeCmd env
 
         | TasksMsg (ClientToServer.TaskCreationRequested task), _ -> state, creteTask env task
 
@@ -115,26 +115,14 @@ module Tasks =
 
 type ServerMsg =
     | Remote of ClientToServer.Msg
-    | TasksMsg of Tasks.Msg
 
-type Model = Tasks of Tasks.Model
+type Model = NA
 
 let init dispatch () =
     dispatch ServerToClient.ServerConnected
-    let tasksModel, cmd = Tasks.init
-    (Tasks tasksModel), Cmd.map TasksMsg cmd
+    NA, Cmd.none
 
-let rec update env clientDispatch msg (state : Model) =
+let rec update env clientDispatch msg (state: Model) =
     match msg, state with
-    | TasksMsg m, Tasks state ->
-        let state, cmd =
-            Tasks.update env (ServerToClient.TasksMsg >> clientDispatch) m state
 
-        Tasks state, Cmd.map TasksMsg cmd
-
-    | Remote (ClientToServer.TasksMsg tasksMsg), _ ->
-        //client to server message transformation
-        let msg =
-            tasksMsg |> Tasks.Msg.TasksMsg |> TasksMsg
-        //recurse
-        update env clientDispatch msg state
+    | _ -> state, Cmd.none

@@ -26,7 +26,7 @@ var CONFIG = {
     fsharpEntry: './src/MyPlanner.Client.View/fable-output/App.js',
     cssEntry: './src/MyPlanner.Client.View/style.css',
     outputDir: './deploy/clientFiles',
-    assetsDir: './src/MyPlanner.Client.View/public',
+    assetsDir: './src/MyPlanner.Client.View/Static',
     devServerPort: 8080,
     // When using webpack-dev-server, you may need to redirect some calls
     // to a external API server. See https://webpack.js.org/configuration/dev-server/#devserver-proxy
@@ -78,7 +78,17 @@ module.exports = env => ({
     plugins: (isProduction(env))  ?
         commonPlugins(env).concat([
             new MiniCssExtractPlugin({ filename: 'style.[chunkhash].css' }),
-            new CopyWebpackPlugin({ patterns : [ { from: resolve(CONFIG.assetsDir) }] }),
+            new CopyWebpackPlugin({
+                patterns: [{
+                    from: resolve(CONFIG.assetsDir), 
+                    globOptions: {
+                        ignore: [
+                            "**/*.html",
+                            "**/*.css",
+                        ],
+                    }
+                }]
+            }),
         ])
         : commonPlugins(env).concat([
             new webpack.HotModuleReplacementPlugin(),
@@ -88,6 +98,7 @@ module.exports = env => ({
             symlinks: false,
             alias: {
                 './_Pages': path.resolve(__dirname, `src/MyPlanner.Client.View/Pages`),
+                './_Static': path.resolve(__dirname, `src/BinDrake.Client.View/Static`),
                 './_Components': path.resolve(__dirname, `src/MyPlanner.Client.View/Components`),
             },
     },

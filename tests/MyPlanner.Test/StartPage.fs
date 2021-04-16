@@ -6,16 +6,13 @@ open MyPlanner.Test
 open MyPlanner.Shared.Domain
 open MyPlanner.Test.Environments
 open Expecto
+open MyPlanner.Client.Main
+
 
 [<Given>]
-let ``there is 1 task on the system`` () =
-    let tasks =
-        [   {       Id = "1" |> ShortString.ofString |> TaskId
-                    Version = version0; 
-                    Title = TaskTitle (ShortString.ofString "title"); 
-                    Description = TaskDescription (LongString.ofString "desc") } ]
+let ``I am not logged in`` () =
 
-    Environments.AppEnv(null,tasks)
+    Environments.AppEnv(null)
 
 [<When>]
 let ``I visit the start page`` (appEnv: AppEnv) =
@@ -25,12 +22,26 @@ let ``I visit the start page`` (appEnv: AppEnv) =
     System.Threading.Thread.Sleep 500
     api
 
+[<When>]
+let ``I visit the login page`` (appEnv: AppEnv) =
+    let api =
+        ElmishLoop.runWithDefaults appEnv (Route.Signin |> Some) ElmishLoop.defaultServerModel
+
+    System.Threading.Thread.Sleep 500
+    api
+
 [<Then>]
-let ``I should be redirect to /tasks`` (api: ElmishLoop.API) =
+let ``I should be redirect to signin page`` (api: ElmishLoop.API) =
     let model = !api.ClientModel
 
     match model.ConnectionStatus, model.Page with
-    | Main.Connected, Some (Main.Page.Tasks (Some _)) -> true
+    | Main.Connected, Some (Main.Page.Signin (_)) -> true
     | _ -> false
     |> Expect.isTrue
-    <| "Not on the tasks page"
+    <| "Not on the singin page"
+
+
+
+// When I visit the login page
+// And I click to signup link
+// Then I should be at signup page

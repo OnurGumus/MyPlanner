@@ -1,17 +1,9 @@
 {
   "scripts": {
     "dev": "webpack serve --mode development --env development",
-    "prod": "webpack  --mode production --env production",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "prod": "webpack  --mode production --env production"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@storybook/addon-actions": "^6.1.21",
-    "@storybook/addon-essentials": "^6.1.21",
-    "@storybook/addon-links": "^6.1.21",
-    "@storybook/react": "^6.1.21",
-    "babel-loader": "^8.2.2",
     "base-href-webpack-plugin": "^2.0.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
@@ -30,8 +22,6 @@
   },
   "dependencies": {
     "construct-style-sheets-polyfill": "^2.4.16",
-    "custom-elements-hmr-polyfill": "^1.0.3",
-    "dialog-polyfill": "^0.5.6",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
