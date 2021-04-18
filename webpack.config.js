@@ -25,7 +25,7 @@ var CONFIG = {
     indexHtmlTemplate: './src/MyPlanner.Client.View/index.html',
     fsharpEntry: './src/MyPlanner.Client.View/fable-output/App.js',
     outputDir: './deploy/clientFiles',
-    assetsDir: './src/MyPlanner.Client.View/Static',
+    assetsDir: './src/MyPlanner.Client.View/www',
     devServerPort: 8080,
     // When using webpack-dev-server, you may need to redirect some calls
     // to a external API server. See https://webpack.js.org/configuration/dev-server/#devserver-proxy
