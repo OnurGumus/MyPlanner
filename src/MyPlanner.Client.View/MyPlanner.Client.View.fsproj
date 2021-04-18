@@ -9,7 +9,6 @@
     <Compile Include="Components/WebComponent.fs" />
     <Compile Include="Components/ModalWindow.fs" />
     <Compile Include="Pages/Singin.fs" />
-    <Compile Include="Pages/Tasks.fs" />
     <Compile Include="Main.fs" />
     <Compile Include="Elmish.Bridge.fs" />
     <Compile Include="App.fs" />
