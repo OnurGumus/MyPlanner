@@ -24,7 +24,6 @@ var CONFIG = {
     // See https://github.com/jantimon/html-webpack-plugin
     indexHtmlTemplate: './src/MyPlanner.Client.View/index.html',
     fsharpEntry: './src/MyPlanner.Client.View/fable-output/App.js',
-    cssEntry: './src/MyPlanner.Client.View/style.css',
     outputDir: './deploy/clientFiles',
     assetsDir: './src/MyPlanner.Client.View/Static',
     devServerPort: 8080,
@@ -46,10 +45,9 @@ var CONFIG = {
 
 module.exports = env => ({
     entry: (isProduction(env)) ? {
-        app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.cssEntry)]
+        app: [resolve(CONFIG.fsharpEntry)]
     } : {
             app: [resolve(CONFIG.fsharpEntry)],
-            style: [resolve(CONFIG.cssEntry)]
         },
     // Add a hash to the output file name in production
     // to prevent browser caching if code changes

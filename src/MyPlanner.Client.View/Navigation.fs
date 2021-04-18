@@ -27,7 +27,7 @@ let newUrl (newUrl: string, replaceState) =
 
 let toPage =
     function
-    | Route.Tasks -> "tasks"
+    | Route.Signin -> "signin"
 
 let parseRoute: Parser<Route -> Route, Route> =
     let addBaseUrl p =
@@ -36,5 +36,5 @@ let parseRoute: Parser<Route -> Route, Route> =
         | "" -> p
         | _ -> (s baseUrl) </> p
 
-    oneOf [ map (Route.Tasks) <| addBaseUrl (s "")
-            map (Route.Tasks) <| addBaseUrl (s "tasks") ]
+    oneOf [ map (Route.Signin) <| addBaseUrl (s "")
+            map (Route.Signin) <| addBaseUrl (s "signin") ]

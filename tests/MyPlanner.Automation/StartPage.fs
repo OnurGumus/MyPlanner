@@ -6,13 +6,8 @@ open MyPlanner.Test.Environments
 open MyPlanner.Shared.Domain
 
 [<Given>]
-let ``there is 1 task on the system`` () = 
-    let tasks =
-        [ {   Id = "test_task" |> ShortString.ofString |> TaskId
-              Version = version0
-              Title = TaskTitle(ShortString.ofString "title")
-              Description = TaskDescription(LongString.ofString "desc") }]
-    AppEnv(Host.config,tasks)
+let ``I am not logged in`` () = 
+    AppEnv(Host.config)
 
 
 [<When>]
@@ -22,6 +17,6 @@ let ``I visit the start page`` ((appEnv: AppEnv)) =
     url "http://localhost:8085"
 
 [<Then>]
-let ``I should be redirect to /tasks`` () = 
+let ``I should be redirect to signin page`` () = 
     sleep 5
-    currentUrl() |> contains "tasks"
+    currentUrl() |> contains "signin"

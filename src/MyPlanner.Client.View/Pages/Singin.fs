@@ -1,7 +1,7 @@
 module MyPlanner.Client.View.Pages.Signin
 
 open MyPlanner.Client
-open Pages.Tasks
+open Pages.Signin
 open MyPlanner.Shared.Domain
 open Feliz
 open Fable.Core.JsInterop
