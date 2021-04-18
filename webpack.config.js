@@ -108,7 +108,8 @@ module.exports = env => ({
         proxy: CONFIG.devServerProxy,
         hot: true,
         inline:true,
-        historyApiFallback: true
+        historyApiFallback: true,
+        watchContentBase: true,
     },
     module: {
         rules: [
