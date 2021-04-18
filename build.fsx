@@ -176,19 +176,7 @@ Target.create "RunAutomation" (fun _ ->
 
 open Fake.Core.TargetOperators
 
-"BuildServer" ==> "RunAutomation"
-"BuildServerOnlyRelease" ==> "BuildRelease"
-// ==> "InstallClient"
-// ==> "BuildServerOnly"
-// ==> "Build"
-// ==> "RunServerTests"
-// ==> "RunAutomation"
-
-// "Clean" ==> "InstallClient" ==> "Build" ==> "Run"
-
-// "Clean"
-// ==> "InstallClient"
-// ==> "BuildServerOnlyRelease"
-// ==> "BuildRelease"
+"Clean" ==> "BuildServer" ==> "RunAutomation"
+"Clean" ==> "BuildServerOnlyRelease" ==> "BuildRelease" 
 
 Target.runOrDefaultWithArguments "Build"

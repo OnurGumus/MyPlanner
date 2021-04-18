@@ -36,6 +36,7 @@ nuget Hocon.Extensions.Configuration
 nuget FSharp.Interop.Dynamic
 nuget Fable.Validation
 nuget Fable.Aether
+nuget Hyperion 0.9.17
 
 group Client
     source https://api.nuget.org/v3/index.json
