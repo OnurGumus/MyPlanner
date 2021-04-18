@@ -22,7 +22,7 @@ var commonPlugins = env => [
 var CONFIG = {
     // The tags to include the generated JS and CSS will be automatically injected in the HTML template
     // See https://github.com/jantimon/html-webpack-plugin
-    indexHtmlTemplate: './src/MyPlanner.Client.View/index.html',
+    indexHtmlTemplate: './src/MyPlanner.Client.View/www/index.html',
     fsharpEntry: './src/MyPlanner.Client.View/fable-output/App.js',
     outputDir: './deploy/clientFiles',
     assetsDir: './src/MyPlanner.Client.View/www',
