@@ -1,0 +1,15 @@
+:host,body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+button{
+    min-width: 233px;
+    min-height: 48px;
+    height: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+}

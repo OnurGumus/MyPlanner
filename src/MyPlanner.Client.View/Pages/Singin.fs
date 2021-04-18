@@ -2,27 +2,34 @@ module MyPlanner.Client.View.Pages.Signin
 
 open MyPlanner.Client
 open Pages.Signin
-open MyPlanner.Shared.Domain
 open Feliz
 open Fable.Core.JsInterop
 open MyPlanner.Client.View.Components
-open Browser.Dom
 open MyPlanner.Client.View
-open System
-open Browser.Types
 open Fable
 open MyPlanner.Client.View.Util
 
 ModalWindow.ensureDefined ()
 
 let html : string =
-    importDefault ("!!raw-loader!./_wwwroot/design/signin/index.html")
+    importDefault ("!!raw-loader!./_wwwroot/_signin/index.html")
 
-let layoutCSS : string =
+let mainLayoutCSS : string =
     importDefault ("!!raw-loader!./_wwwroot/layout.css")
 
+let mainTextCSS : string =
+    importDefault ("!!raw-loader!./_wwwroot/text.css")
 
-Browser.Dom.document?adoptedStyleSheets <- [| layoutCSS |] |> Array.map createSheet
+let layoutCSS : string =
+    importDefault ("!!raw-loader!./_wwwroot/_signin/layout.css")
+
+let appearanceCSS : string =
+    importDefault ("!!raw-loader!./_wwwroot/_signin/appearance.css")
+
+let textCSS : string =
+    importDefault ("!!raw-loader!./_wwwroot/_signin/text.css")
+
+
 
 [<ReactComponent>]
 let SigninView dispatch (model: Model) =
@@ -32,9 +39,16 @@ let SigninView dispatch (model: Model) =
     React.useLayoutEffect (
         (fun _ ->
             match shadowRoot with
-            | Some shadowRoot -> shadowRoot?adoptedStyleSheets <- [| layoutCSS |] |> Array.map createSheet
-            | _ -> ()
-            ),
+            | Some shadowRoot ->
+                shadowRoot?adoptedStyleSheets <- [|
+                                                     mainLayoutCSS
+                                                     mainTextCSS
+                                                     layoutCSS
+                                                     textCSS
+                                                     appearanceCSS
+                                                 |]
+                                                 |> Array.map createSheet
+            | _ -> ()),
         [| shadowRoot |> box<_> |]
     )
 
@@ -42,6 +56,7 @@ let SigninView dispatch (model: Model) =
         "signin-page"
         [
             attachShadowRoot
-            prop.className "page"
+            prop.custom ("class", "page")
+
             prop.children []
         ]
