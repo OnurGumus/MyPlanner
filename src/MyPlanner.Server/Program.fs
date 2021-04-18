@@ -14,8 +14,8 @@ open Microsoft.Extensions.Configuration
 open Hocon.Extensions.Configuration
 open MyPlanner.Shared
 let clientPath  =
-#if DEBUG 
-   [(Constants.ClientPath,"../MyPlanner.Client.View/public")]  |> dict
+#if DEBUG
+   [(Constants.ClientPath,"../MyPlanner.Client.View/www")]  |> dict
 #else
     [(Constants.ClientPath,"./clientFiles")] |> dict
 #endif

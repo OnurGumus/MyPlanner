@@ -96,7 +96,7 @@ module.exports = env => ({
             symlinks: false,
             alias: {
                 './_Pages': path.resolve(__dirname, `src/MyPlanner.Client.View/Pages`),
-                './_Static': path.resolve(__dirname, `src/BinDrake.Client.View/Static`),
+                './_www': path.resolve(__dirname, `src/MyPlanner.Client.View/www`),
                 './_Components': path.resolve(__dirname, `src/MyPlanner.Client.View/Components`),
             },
     },

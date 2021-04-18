@@ -15,7 +15,7 @@ open Fable
 ModalWindow.ensureDefined ()
 
 let html : string =
-    importDefault ("!!raw-loader!./_Pages/Tasks.html")
+    importDefault ("!!raw-loader!./_www/signin/index.html")
 
 
 [<ReactComponent>]
