@@ -25,28 +25,6 @@ let clientPath =
 
 let clientDeployPath = Path.combine clientPath "deploy"
 let deployDir = Path.getFullName "./deploy"
-let clientDeployReleasePath = "clientFiles" |> Path.combine deployDir
-
-let baseUrl =
-    Environment.environVarOrDefault ("baseUrl") ""
-
-let platformTool tool winTool =
-    let tool =
-        if Environment.isUnix then tool else winTool
-
-    match ProcessUtils.tryFindFileOnPath tool with
-    | Some t -> t
-    | _ ->
-        let errorMsg =
-            tool
-            + " was not found in path. "
-            + "Please install it and make sure it's available from your path. "
-            + "See https://safe-stack.github.io/docs/quickstart/#install-pre-requisites for more info"
-
-        failwith errorMsg
-
-let nodeTool = platformTool "node" "node.exe"
-let yarnTool = platformTool "yarn" "yarn.cmd"
 
 let runTool procStart cmd args workingDir =
     let arguments =
@@ -76,23 +54,7 @@ let openBrowser url =
 
 Target.create "Clean" (fun _ -> [ deployDir; clientDeployPath ] |> Shell.cleanDirs)
 
-Target.create
-    "InstallClient"
-    (fun _ ->
-        let runTool = runTool Proc.run
-        printfn "Node version:"
-        runTool nodeTool "--version" __SOURCE_DIRECTORY__
-        printfn "Yarn version:"
-        runTool yarnTool "--version" __SOURCE_DIRECTORY__
-        runTool yarnTool "install --frozen-lockfile" __SOURCE_DIRECTORY__)
-
 Target.create "BuildServer" (fun _ -> runDotNet "build" serverPath)
-
-Target.create
-    "BuildClient"
-    (fun _ ->
-        let runTool = runTool Proc.run
-        runTool yarnTool ("webpack-cli -p --env.baseUrl=" + baseUrl) __SOURCE_DIRECTORY__)
 
 Target.create
     "BuildServerOnlyRelease"

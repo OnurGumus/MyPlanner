@@ -15,9 +15,9 @@ open Hocon.Extensions.Configuration
 open MyPlanner.Shared
 let clientPath  =
 #if DEBUG
-   [(Constants.ClientPath,"../MyPlanner.Client.View/www")]  |> dict
+   [(Constants.ClientPath,"../MyPlanner.Client.View/wwwroot")]  |> dict
 #else
-    [(Constants.ClientPath,"./clientFiles")] |> dict
+    [(Constants.ClientPath,"./wwwroot")] |> dict
 #endif
 let configBuilder =
     ConfigurationBuilder()

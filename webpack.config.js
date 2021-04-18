@@ -22,10 +22,10 @@ var commonPlugins = env => [
 var CONFIG = {
     // The tags to include the generated JS and CSS will be automatically injected in the HTML template
     // See https://github.com/jantimon/html-webpack-plugin
-    indexHtmlTemplate: './src/MyPlanner.Client.View/www/index.html',
+    indexHtmlTemplate: './src/MyPlanner.Client.View/wwwroot/index.html',
     fsharpEntry: './src/MyPlanner.Client.View/fable-output/App.js',
-    outputDir: './deploy/clientFiles',
-    assetsDir: './src/MyPlanner.Client.View/www',
+    outputDir: './deploy/wwwroot',
+    assetsDir: './src/MyPlanner.Client.View/wwwroot',
     devServerPort: 8080,
     // When using webpack-dev-server, you may need to redirect some calls
     // to a external API server. See https://webpack.js.org/configuration/dev-server/#devserver-proxy
@@ -96,7 +96,7 @@ module.exports = env => ({
             symlinks: false,
             alias: {
                 './_Pages': path.resolve(__dirname, `src/MyPlanner.Client.View/Pages`),
-                './_www': path.resolve(__dirname, `src/MyPlanner.Client.View/www`),
+                './_wwwroot': path.resolve(__dirname, `src/MyPlanner.Client.View/wwwroot`),
                 './_Components': path.resolve(__dirname, `src/MyPlanner.Client.View/Components`),
             },
     },
