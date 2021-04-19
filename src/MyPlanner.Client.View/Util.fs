@@ -6,6 +6,8 @@ open Fable.React.Helpers
 open Fable.Core.JsInterop
 open Browser.Types
 
+importAll "construct-style-sheets-polyfill"
+
 [<Global>]
 type CSSStyleSheet() =
     class

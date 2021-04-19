@@ -10,17 +10,19 @@ html {
 
 body {
     min-height: 100vh;
-    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-main {
-    height: 100%;
-}
 
-.page {
-    height: 100%;
+
+main, .page {
+    flex:1;
+    display: flex;
+    flex-direction: column;
 }
 
 h1, h2, h3, h4, h5, h6 {
