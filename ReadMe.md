@@ -7,6 +7,8 @@ You'll need to install the following pre-requisites in order to build SAFE appli
 * [Node LTS](https://nodejs.org/en/download/) installed for the front end components.
 * If you're running on OSX or Linux, you'll also need to install [Mono](https://www.mono-project.com/docs/getting-started/install/).
 
+
+
 ## Work with the application
 
 ![demo](myplanner.gif)
