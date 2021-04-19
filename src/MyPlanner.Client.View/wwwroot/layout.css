@@ -3,22 +3,26 @@
 *::after {
     box-sizing: border-box;
 }
-html,body {
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
+
+html {
+    height: -webkit-fill-available;
 }
 
+body {
+    min-height: 100vh;
+    height: -webkit-fill-available;
+    padding: 0;
+    margin: 0;
+}
 
 main {
     height: 100%;
 }
 
-#elmish-app {
+.page {
     height: 100%;
 }
 
-.page {
-    height: 100%;
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
 }
