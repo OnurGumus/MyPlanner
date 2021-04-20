@@ -1,0 +1,14 @@
+{
+  "files.exclude": {
+    ".gitignore": true,
+    "global.json": true,
+    "paket.lock": true,
+    "yarn-error.log": true,
+    "yarn.lock": true,
+    "node_modules": true,
+    "paket-files": true,
+    ".paket": true,
+    ".ionide": true,
+    ".fake": true
+  }
+}

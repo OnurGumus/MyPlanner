@@ -1,4 +1,4 @@
-module MyPlanner.Test.CQRS.StartPage
+module MyPlanner.Test.StepDefs.StartPage
 
 open MyPlanner.Client
 open TickSpec
@@ -40,8 +40,20 @@ let ``I should be redirect to signin page`` (api: ElmishLoop.API) =
     |> Expect.isTrue
     <| "Not on the singin page"
 
+[<When>]
+let ``I click to signup link`` (api: ElmishLoop.API) =
+    api.NewUrl (Some Route.Signup, true)
+
+[<Then>]
+let ``I should be at signup page`` (api: ElmishLoop.API) =
+    let model = !api.ClientModel
+
+    match model.ConnectionStatus, model.Page with
+    | Main.Connected, Some (Main.Page.Signup (_)) -> true
+    | _ -> false
+    |> Expect.isTrue
+    <| "Not on the singin page"
 
 
-// When I visit the login page
-// And I click to signup link
-// Then I should be at signup page
+ 
+    

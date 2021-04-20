@@ -9,7 +9,7 @@
     <Compile Include="ExpectoTickSpecHelper.fs" />
     <Compile Include="Environments.fs" />
     <Compile Include="ElmishLoop.fs" />
-    <Compile Include="StartPage.fs" />
+    <Compile Include="StepDefs\StartPage.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
     <EmbeddedResource Include="../../features/start-page.feature" />

@@ -6,6 +6,7 @@
   <ItemGroup>
     <Compile Include="Navigation.fs" />
     <Compile Include="Pages/Signin.fs" />
+    <Compile Include="Pages/Signup.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
   <ItemGroup>
