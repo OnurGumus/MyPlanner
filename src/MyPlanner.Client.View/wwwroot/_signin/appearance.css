@@ -2,10 +2,11 @@ h1,h2 {
     color: rgb(68, 68, 68);
 }
 
-button {
+.action {
     background-color: #107c41;
     border: 1px solid #f4f4f4;
     color:white;
     cursor: pointer;
+    text-decoration: none;
 }
 

@@ -31,7 +31,7 @@ let ``I visit the login page`` (appEnv: AppEnv) =
     api
 
 [<Then>]
-let ``I should be redirect to signin page`` (api: ElmishLoop.API) =
+let ``I should be at the signin page`` (api: ElmishLoop.API) =
     let model = !api.ClientModel
 
     match model.ConnectionStatus, model.Page with

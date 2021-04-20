@@ -5,7 +5,7 @@ As a I user I would like to visit the start page
 Scenario: Not logged in
 Given I am not logged in
 When I visit the start page
-Then I should be redirect to signin page
+Then I should be at the signin page
 
 
 Scenario: Click to Signup
