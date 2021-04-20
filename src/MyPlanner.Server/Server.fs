@@ -19,14 +19,6 @@ open Hocon.Extensions.Configuration
 
 
 let publicPath (env:#IConfiguration) =  Path.GetFullPath env.[Constants.ClientPath]
-// #if DEBUG
-// let publicPath =
-//     Path.GetFullPath "../MyPlanner.Client/deploy"
-// #else
-// let publicPath = Path.GetFullPath "./clientFiles"
-// #endif
-
-
 
 
 // type ElmishBridge.BridgeServer<'arg, 'model, 'server, 'client, 'impl> with
