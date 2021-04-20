@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: center;
 }
-:host > section,body > section{
+:host > section, body > section{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,6 +15,6 @@ button{
     min-inline-size: 233px;
     min-block-size: 48px;
     block-size: auto;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-inline-start: 10px;
+    margin-inline-end: 10px;
 }
