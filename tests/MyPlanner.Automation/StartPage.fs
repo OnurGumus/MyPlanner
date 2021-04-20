@@ -7,7 +7,7 @@ open MyPlanner.Shared.Domain
 open OpenQA.Selenium
 
 let getPageShadowRoot page = 
-    let  shadowRoot:IWebElement = (js $"""return (document.querySelector("${page}")).shadowRoot""") |> unbox<_>
+    let  shadowRoot:IWebElement = (js $"""return (document.querySelector("{page}")).shadowRoot""") |> unbox<_>
     shadowRoot
 [<Given>]
 let ``I am not logged in`` () = 
@@ -20,16 +20,23 @@ let ``I visit the start page`` ((appEnv: AppEnv)) =
     Host.startBrowser()
     url "http://localhost:8085"
 
+[<When>]
+let ``I visit the signin page`` ((appEnv: AppEnv)) = 
+    Host.startHost (appEnv)
+    Host.startBrowser()
+    url "http://localhost:8085/signin"
+
+
 [<Then>]
 let ``I should be at the signin page`` () = 
     waitFor(fun () -> (currentUrl().Contains "signin"))
 
 [<When>]
-let ``I click to signup link`` () = 
-    let shadowRoot = getPageShadowRoot "sigin-page"
+let ``I click to the signup link`` () = 
+    let shadowRoot = getPageShadowRoot "signin-page"
     let button = elementWithin "#signup" shadowRoot 
     button |> click
 
 [<Then>]
 let ``I should be at the signup page`` () = 
-    waitFor(fun () -> (currentUrl().Contains "signin"))
+    waitFor(fun () -> (currentUrl().Contains "signup"))

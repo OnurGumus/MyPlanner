@@ -23,7 +23,7 @@ let ``I visit the start page`` (appEnv: AppEnv) =
     api
 
 [<When>]
-let ``I visit the login page`` (appEnv: AppEnv) =
+let ``I visit the signin page`` (appEnv: AppEnv) =
     let api =
         ElmishLoop.runWithDefaults appEnv (Route.Signin |> Some) ElmishLoop.defaultServerModel
 
@@ -38,21 +38,21 @@ let ``I should be at the signin page`` (api: ElmishLoop.API) =
     | Main.Connected, Some (Main.Page.Signin (_)) -> true
     | _ -> false
     |> Expect.isTrue
-    <| "Not on the singin page"
+    <| "Not on the sign-in page"
 
 [<When>]
-let ``I click to signup link`` (api: ElmishLoop.API) =
+let ``I click to the signup link`` (api: ElmishLoop.API) =
     api.NewUrl (Some Route.Signup, true)
 
 [<Then>]
-let ``I should be at signup page`` (api: ElmishLoop.API) =
+let ``I should be at the signup page`` (api: ElmishLoop.API) =
     let model = !api.ClientModel
 
     match model.ConnectionStatus, model.Page with
     | Main.Connected, Some (Main.Page.Signup (_)) -> true
     | _ -> false
     |> Expect.isTrue
-    <| "Not on the singin page"
+    <| "Not on the sign-up page"
 
 
  

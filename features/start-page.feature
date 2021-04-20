@@ -7,10 +7,9 @@ Given I am not logged in
 When I visit the start page
 Then I should be at the signin page
 
-
 Scenario: Click to Signup
 Given I am not logged in
-When I visit the login page
-And I click to signup link
-Then I should be at signup page
+When I visit the signin page
+And I click to the signup link
+Then I should be at the signup page
 
