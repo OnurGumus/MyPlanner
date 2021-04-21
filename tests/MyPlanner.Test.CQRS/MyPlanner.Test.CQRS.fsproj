@@ -6,13 +6,14 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="StepDefs/Signup.fs" />
     <Compile Include="ExpectoTickSpecHelper.fs" />
-    <Compile Include="CreateTasks.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
     <Content Include="./config.hocon">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="../../features/sign-up.feature" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyPlanner.Command\MyPlanner.Command.fsproj" />

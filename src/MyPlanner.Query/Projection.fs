@@ -73,24 +73,13 @@ let createTables (config: IConfiguration) =
 
         offset.OffsetName <- "Tasks"
         ctx.SubmitUpdates()
-
-        let list = "SELECT
-            count(*)
-        FROM
-        sqlite_master
-        WHERE
-            type ='table' AND
-            name NOT LIKE 'sqlite_%'"
-        cmd.CommandText <- list
-        let count : int64 = cmd.ExecuteScalar() :?> _
-        printf "%A count" count
         conn
     with ex ->
         printf "%A" ex
         conn
 
-type TaskEvent = TaskCreated of Task
-type DataEvent = TaskEvent of TaskEvent
+// type TaskEvent = TaskCreated of Task
+// type DataEvent = TaskEvent of TaskEvent
 
 
 QueryEvents.SqlQueryEvent
@@ -100,29 +89,29 @@ let handleEvent (connectionString: string) (subQueue: ISourceQueue<_>) (envelop:
     let ctx = Sql.GetDataContext(connectionString)
     Log.Information("Handle event {@Envelope}", envelop)
 
-    let dataEvent =
-        match envelop.Event with
-        | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
-            match taskEvent with
-            | Event ({
-                         Event = Command.Domain.Task.TaskCreated task
-                     }) ->
-                let (Version v) = task.Version
-                let (TaskId (ShortString tid)) = task.Id
-                let (TaskTitle (ShortString title)) = task.Title
-                let (TaskDescription (LongString desc)) = task.Description
-                let row = ctx.Main.Tasks.Create(desc, title, v)
-                row.Id <- tid
-                Some (TaskEvent (TaskCreated task))
-            | _ -> None
-        | _ -> None
+    // let dataEvent =
+    //     match envelop.Event with
+    //     | :? Message<Command.Domain.Task.Command, Command.Domain.Task.Event> as taskEvent ->
+    //         match taskEvent with
+    //         | Event ({
+    //                      Event = Command.Domain.Task.TaskCreated task
+    //                  }) ->
+    //             let (Version v) = task.Version
+    //             let (TaskId (ShortString tid)) = task.Id
+    //             let (TaskTitle (ShortString title)) = task.Title
+    //             let (TaskDescription (LongString desc)) = task.Description
+    //             let row = ctx.Main.Tasks.Create(desc, title, v)
+    //             row.Id <- tid
+    //             Some (TaskEvent (TaskCreated task))
+    //         | _ -> None
+    //     | _ -> None
 
-    ctx.Main.Offsets.Individuals.Tasks.OffsetCount <- (envelop.Offset :?> Sequence).Value
-    ctx.SubmitUpdates()
+    // ctx.Main.Offsets.Individuals.Tasks.OffsetCount <- (envelop.Offset :?> Sequence).Value
+    // ctx.SubmitUpdates()
 
-    match dataEvent with
-    | Some dataEvent -> subQueue.OfferAsync(dataEvent).Wait()
-    | _ -> ()
+    // match dataEvent with
+    // | Some dataEvent -> subQueue.OfferAsync(dataEvent).Wait()
+    // | _ -> ()
 
 
 

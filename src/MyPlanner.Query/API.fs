@@ -15,7 +15,7 @@ type IAPI =
         ?filter: string * ?orderby: string * ?thenby: string * ?take: int * ?skip: int ->
         list<'t> Async
 
-    abstract Subscribe : (DataEvent -> unit) -> IKillSwitch
+    //abstract Subscribe : (DataEvent -> unit) -> IKillSwitch
 
 let subscribeToStream source mat sink =
     source
@@ -44,24 +44,25 @@ let api (config: IConfiguration) actorApi =
             ks :> IKillSwitch)
 
     { new IAPI with
-        override this.Subscribe(cb) = subscribeCmd (cb)
+       // override this.Subscribe(cb) = subscribeCmd (cb)
 
         override this.Query(?filter, ?orderby, ?thenby, ?take, ?skip) : Async<'t list> =
             let ctx = Sql.GetDataContext(connString)
-            let tasks = ctx.Main.Tasks |> Seq.toArray
+            failwith ""
+            // let tasks = ctx.Main.Tasks |> Seq.toArray
 
-            let res =
-                [
-                    for task in tasks do
-                        {
-                            Id = (TaskId(ShortString.ofString task.Id))
-                            Version = Version(task.Version)
-                            Title = TaskTitle(ShortString.ofString task.Title)
-                            Description = TaskDescription(LongString.ofString task.Description)
-                        }
-                ]
-                |> box
-                :?> list<'t>
+            // let res =
+            //     [
+            //         for task in tasks do
+            //             {
+            //                 Id = (TaskId(ShortString.ofString task.Id))
+            //                 Version = Version(task.Version)
+            //                 Title = TaskTitle(ShortString.ofString task.Title)
+            //                 Description = TaskDescription(LongString.ofString task.Description)
+            //             }
+            //     ]
+            //     |> box
+            //     :?> list<'t>
 
-            async { return res }
+            // async { return res }
     }

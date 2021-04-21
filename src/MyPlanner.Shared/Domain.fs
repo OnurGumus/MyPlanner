@@ -78,32 +78,33 @@ module Version =
     let value_ =
         (fun (Version v) -> v), (fun v _ -> Version v)
 
-type TaskId = TaskId of ShortString
+type UserId = UserId of ShortString
 
-module TaskId =
+module UserId =
     let value_ =
-        (fun (TaskId v) -> v), (fun v _ -> TaskId v)
+        (fun (UserId v) -> v), (fun v _ -> UserId v)
 
-type TaskDescription = TaskDescription of LongString
+type UserName = UserName of ShortString
 
-module TaskDescription =
+module UserName =
     let value_ =
-        (fun (TaskDescription v) -> v), (fun v _ -> TaskDescription v)
+        (fun (UserName v) -> v), (fun v _ -> UserName v)
 
 
-type TaskTitle = TaskTitle of ShortString
+type Password = Password of ShortString
 
-module TaskTitle =
+module Password =
     let value_ =
-        (fun (TaskTitle v) -> v), (fun v _ -> TaskTitle v)
+        (fun (Password v) -> v), (fun v _ -> Password v)
 
-type Task =
+type VerificationCode = VerificationCode of int
+type User =
     {
-        Id: TaskId
+        Id: UserId
         Version: Version
-        Title: TaskTitle
-        Description: TaskDescription
+        UserName: UserName
+        Password: Password
     }
 
 module Command =
-    type CreateTask = Task -> Result<Task, string> Async
+    type RegisterUser = User -> Result<VerificationCode, string> Async

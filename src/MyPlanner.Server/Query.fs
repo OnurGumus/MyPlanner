@@ -8,4 +8,4 @@ open Akka.Streams
 [<Interface>]
 type IQuery =
     abstract Query<'t> : ?filter:string * ?orderby:string * ?thenby:string * ?take:int * ?skip:int -> list<'t> Async
-    abstract Subscribe:(DataEvent -> unit)->IKillSwitch
+    //abstract Subscribe:(DataEvent -> unit)->IKillSwitch

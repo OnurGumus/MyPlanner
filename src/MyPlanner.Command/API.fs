@@ -2,7 +2,7 @@ module MyPlanner.Command.API
 
 open MyPlanner.Shared.Domain.Command
 open Common
-open Domain.Task
+open Domain.User
 open Serilog
 
 open MyPlanner.Shared.Domain
@@ -11,19 +11,19 @@ open Actor
 open NodaTime
 open System
 
-let createTask (domainApi: IDomain) : CreateTask =
-    fun task ->
-        match task with
-        | { Id = TaskId (ShortString taskId) } as task ->
+let registerUser (domainApi: IDomain) : RegisterUser =
+    fun user ->
+        match user with
+        | { Id = UserId (ShortString userId) } as user ->
             async {
-                let taskId = $"task_{taskId}" |> Uri.EscapeUriString
+                let userId = $"user_{userId}" |> Uri.EscapeUriString
 
-                let corID = taskId |> SagaStarter.toCid
-                let taskActor = domainApi.TaskFactory taskId
+                let corID = userId |> SagaStarter.toCid
+                let taskActor = domainApi.UserFactory userId
 
                 let commonCommand : Command<_> =
                     {
-                        Command = CreateTask task
+                        Command = Register user
                         CreationDate = domainApi.Clock.GetCurrentInstant()
                         CorrelationId = corID
                     }
@@ -34,17 +34,17 @@ let createTask (domainApi: IDomain) : CreateTask =
                         EntityRef = taskActor
                         Filter =
                             (function
-                            | TaskCreated _ -> true)
+                            | VerificationRequested _ -> true)
                     }
                     |> Execute
 
                 match! (domainApi.ActorApi.SubscribeForCommand c) with
-                | { Event = TaskCreated t; Version = v } -> return Ok t
+                | { Event = (VerificationRequested (user,code)); Version = v } -> return Ok code
             }
 
 [<Interface>]
 type IAPI =
-    abstract CreateTask : CreateTask
+    abstract ReisterUser : RegisterUser
     abstract ActorApi : IActor
 
 
@@ -54,5 +54,5 @@ let api config (clock: IClock) =
 
     { new IAPI with
         member _.ActorApi = actorApi
-        member _.CreateTask = createTask domainApi
+        member _.ReisterUser = registerUser domainApi
     }
