@@ -6,10 +6,11 @@ open Domain.User
 open Serilog
 
 open MyPlanner.Shared.Domain
-open Domain
+open Domain.Api
 open Actor
 open NodaTime
 open System
+open User
 
 let registerUser (domainApi: IDomain) : RegisterUser =
     fun user ->
@@ -18,7 +19,7 @@ let registerUser (domainApi: IDomain) : RegisterUser =
             async {
                 let userId = $"user_{userId}" |> Uri.EscapeUriString
 
-                let corID = userId |> SagaStarter.toCid
+                let corID = userId |> SagaStarter.toNewCid
                 let taskActor = domainApi.UserFactory userId
 
                 let commonCommand : Command<_> =
@@ -34,12 +35,17 @@ let registerUser (domainApi: IDomain) : RegisterUser =
                         EntityRef = taskActor
                         Filter =
                             (function
-                            | VerificationRequested _ -> true)
+                            | VerificationRequired _ -> true | _ -> false)
                     }
                     |> Execute
 
                 match! (domainApi.ActorApi.SubscribeForCommand c) with
-                | { Event = (VerificationRequested (user,code)); Version = v } -> return Ok code
+                | {
+                      Event = (VerificationRequired (code))
+                      Version = v
+                  } -> return Ok code
+
+                | _ -> return failwith "not supported"
             }
 
 [<Interface>]
@@ -50,7 +56,7 @@ type IAPI =
 
 let api config (clock: IClock) =
     let actorApi = Actor.api config
-    let domainApi = Domain.api clock actorApi
+    let domainApi = Domain.Api.api clock actorApi
 
     { new IAPI with
         member _.ActorApi = actorApi

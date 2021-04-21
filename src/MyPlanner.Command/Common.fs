@@ -92,12 +92,15 @@ module SagaStarter =
         let bang = sagaRemoved.IndexOf('~')
         sagaRemoved.Substring(0, bang)
 
-    let toRawGuid name =
-        let originatorName = name |> toOriginatorName
-        let index = originatorName.IndexOf('_')
-        originatorName.Substring(index + 1)
+    let toRawGuid (name : string) =
+        let index = name.IndexOf('~')
+        name.Substring(index + 1)
 
-    let toCid name = name + "~" + Guid.NewGuid().ToString()
+    let toNewCid name = name + "~" + Guid.NewGuid().ToString()
+    let toCid name =
+        let originator = (name |> toOriginatorName)
+        let guid = name |> toRawGuid
+        originator + "~" + guid
 
     let cidToSagaName (name: string) = name.Replace("_", "_Saga_")
     let isSaga (name: string) = name.Contains("_Saga_")
