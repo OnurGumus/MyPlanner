@@ -21,13 +21,14 @@ let DEFAULT_SHARD = "default-shard"
 let shardResolver = fun _ -> DEFAULT_SHARD
 
 module User =
-    type Command = Register of User | WaitForVerification | Verify of VerificationCode
+    type Command = Register of User | WaitForVerification | Verify of VerificationCode | Expire
 
     type Event =
             | RegistrationRequested of User * VerificationCode
             | VerificationEmailSent
             | VerificationFailed
             | VerificationSuccessful
+            | VerificationExpired
 
     type Verification =  NotVerified of VerificationCode | Verified
 
@@ -48,7 +49,10 @@ module User =
                 match msg, state with
                 | Recovering mailbox (Event { Event = RegistrationRequested(user, vCode); Version = version }), _ ->
                     return! ({ User = user; Verification = NotVerified vCode} |> Some, version) |> set
+                | Recovering mailbox (Event { Event = VerificationExpired; Version = version }), _ ->
+                    return! (None, version) |> set
 
+                | Command { Command = (Register user); CorrelationId = ci }, (Some { Verification = NotVerified _ }, v)
                 | Command { Command = (Register user); CorrelationId = ci }, (None, v) ->
                     let v = v + 1L
                     let e =
@@ -69,22 +73,36 @@ module User =
                     sendToSagaStarter event ci
                     return! event |> Event |> Persist
 
-                | Command { Command = (WaitForVerification); CorrelationId = ci }, (Some { Verification = NotVerified vCode }, v)->
+                | Command { Command = (Verify _); CorrelationId = ci }, _ ->
+                    let event = toEvent ci VerificationFailed
+                    SagaStarter.publishEvent mailbox mediator (event)
+                    return! set state
+
+                | Command { Command = Expire; CorrelationId = ci }, (_,v) ->
+                    let event = toEvent ci (VerificationExpired) (v + 1L)
+                    sendToSagaStarter event ci
+                    return! event |> Event |> Persist
+
+                | Command { Command = (WaitForVerification); CorrelationId = ci }, (Some { Verification = NotVerified _ }, v)->
                     let event = toEvent ci VerificationEmailSent v
                     SagaStarter.publishEvent mailbox mediator (event)
                     return! set state
 
                 | Persisted mailbox (Event ({ Event = RegistrationRequested(user, vCode); Version = v } as e)), _ ->
-                    Log.Information "persisted"
                     SagaStarter.publishEvent mailbox mediator e
                     return! (Some {User = user; Verification = NotVerified vCode}, v) |> set
 
-                | Persisted mailbox (Event ({ Event = VerificationSuccessful} as e)), _
+                | Persisted mailbox (Event ({ Event = VerificationExpired; Version = v } as e)), _ ->
+                    SagaStarter.publishEvent mailbox mediator e
+                    return! (None, v) |> set
+
                 | Persisted mailbox (Event ({ Event = VerificationFailed} as e)), _ ->
-                    Log.Information "persisted"
                     SagaStarter.publishEvent mailbox mediator e
                     return! state |> set
 
+                | Persisted mailbox (Event ({ Event = VerificationSuccessful} as e)), (Some s, v) ->
+                    SagaStarter.publishEvent mailbox mediator e
+                    return! (Some {User = s.User; Verification = Verified }, v) |> set
 
                 | _ -> return Unhandled
             }
