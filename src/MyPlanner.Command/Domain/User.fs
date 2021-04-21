@@ -25,7 +25,7 @@ module User =
 
     type Event =
             | RegistrationRequested of User * VerificationCode
-            | VerificationRequired of VerificationCode
+            | VerificationEmailSent
             | VerificationFailed
             | VerificationSuccessful
 
@@ -70,7 +70,7 @@ module User =
                     return! event |> Event |> Persist
 
                 | Command { Command = (WaitForVerification); CorrelationId = ci }, (Some { Verification = NotVerified vCode }, v)->
-                    let event = toEvent ci ((VerificationRequired vCode)) v
+                    let event = toEvent ci VerificationEmailSent v
                     SagaStarter.publishEvent mailbox mediator (event)
                     return! set state
 
@@ -104,6 +104,7 @@ module UserRegistrationSaga =
     type State =
         | NotStarted
         | WaitingForVerification
+        | Completed
     type Event =
         | StateChanged of State
         interface IDefaultTag
@@ -111,7 +112,7 @@ module UserRegistrationSaga =
     let actorProp toEvent (actorApi:IActor) (clockInstance:IClock) (mediator: IActorRef<_>) (mailbox: Eventsourced<obj>) =
         let cid =
             (mailbox.Self.Path.Name |> SagaStarter.toCid)
-        printf "%A" cid
+
         let rec set (state: State) =
 
 
@@ -131,7 +132,6 @@ module UserRegistrationSaga =
                          }
                          |> Common.Command)
 
-
             let userActor =
                     mailbox.Self.Path.Name
                     |> SagaStarter.toOriginatorName
@@ -144,6 +144,10 @@ module UserRegistrationSaga =
                     match state with
                     | NotStarted -> return! WaitingForVerification |> StateChanged |> box |> Persist
                     | WaitingForVerification -> return! set state
+                    | Completed ->
+                        mailbox.Parent()
+                            <! Passivate(Actor.PoisonPill.Instance)
+                        return! set state
                 | PersistentLifecycleEvent ReplaySucceed, _ ->
                     SagaStarter.subscriber mediator mailbox
                     return! set state
@@ -156,6 +160,10 @@ module UserRegistrationSaga =
                     | StateChanged WaitingForVerification ->
                         SagaStarter.cont mediator
                         return! set state
+                    | StateChanged Completed ->
+                        mailbox.Parent()
+                        <! Passivate(Actor.PoisonPill.Instance)
+                        return! set state
                     | _ -> return! set state
                 | :? (Common.Event<User.Event>) as userEvent, _ ->
                     match userEvent with
@@ -165,9 +173,7 @@ module UserRegistrationSaga =
                                     EmailService.SendEmail("1" |> ShortString.ofString ,"2" |> LongString.ofString)))
                         return! set state
                     | { Event = User.VerificationSuccessful } ->
-                        mailbox.Parent()
-                        <! Passivate(Actor.PoisonPill.Instance)
-                        return! set state
+                        return! Completed |> StateChanged |> box |> Persist
                     | _ -> return! set state
 
                 | :? (EmailService.Event) as emailEvent, _ ->

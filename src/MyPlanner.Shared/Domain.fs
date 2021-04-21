@@ -107,4 +107,4 @@ type User =
     }
 
 module Command =
-    type RegisterUser = User -> Result<VerificationCode, string> Async
+    type RegisterUser = User -> Result<unit, string> Async

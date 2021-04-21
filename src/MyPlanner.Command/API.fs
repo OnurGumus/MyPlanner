@@ -35,15 +35,14 @@ let registerUser (domainApi: IDomain) : RegisterUser =
                         EntityRef = taskActor
                         Filter =
                             (function
-                            | VerificationRequired _ -> true | _ -> false)
+                            | VerificationEmailSent  -> true | _ -> false)
                     }
                     |> Execute
 
                 match! (domainApi.ActorApi.SubscribeForCommand c) with
                 | {
-                      Event = (VerificationRequired (code))
-                      Version = v
-                  } -> return Ok code
+                      Event = (VerificationEmailSent)
+                  } -> return Ok ()
 
                 | _ -> return failwith "not supported"
             }

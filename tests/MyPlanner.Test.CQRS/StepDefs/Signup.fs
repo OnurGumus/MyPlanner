@@ -45,5 +45,6 @@ let ``I sign up with my username and pass`` (api: IAPI, (qapi : MyPlanner.Query.
     res
 
 [<Then>]
-let ``I should receive verification code`` (result: Result<User, string>) = ()
+let ``I should receive verification code`` (result: Result<unit, string>) = 
+        "Email not verified" |> Expect.wantOk result
 
