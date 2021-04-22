@@ -45,7 +45,7 @@ let api (clock: IClock) (actorApi: IActor) =
     |> Log.Debug
 
     UserRegistrationSaga.init toEvent actorApi clock
-    |> sprintf "OrderSaga initialized %A"
+    |> sprintf "UserRegistrationSaga initialized %A"
     |> Log.Debug
 
     EmailService.init actorApi.System actorApi.Mediator
