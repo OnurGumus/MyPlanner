@@ -27,7 +27,7 @@ type Event =
     | EmailFailed
 
 
-let actorProp (mailbox: Actor<_>) =
+let actorProp sendEmail (mailbox: Actor<_>) =
     let rec set (state: unit) =
 
         actor {
@@ -35,17 +35,16 @@ let actorProp (mailbox: Actor<_>) =
             | SendEmail (target, text) ->
                 let sender = untyped <| mailbox.Sender()
                 printf "%A" text
-                typed sender <! (EmailSent)
+                Async.StartWithContinuations ( (sendEmail target text), (fun _ -> typed sender <! (EmailSent)), ignore, ignore)
                 return! set ()
-
             | _ -> return! Unhandled
 
         }
 
     set ()
 
-let init system mediator =
+let init system mediator sendEmail =
     let emailService =
-        spawn system <| EmailService <| props (actorProp)
+        spawn system <| EmailService <| props (actorProp sendEmail)
 
     typed mediator <! (emailService |> untyped |> Put)

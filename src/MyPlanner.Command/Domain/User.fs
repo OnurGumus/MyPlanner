@@ -25,7 +25,7 @@ module User =
 
     type Event =
             | RegistrationRequested of User * VerificationCode
-            | VerificationEmailSent
+            | VerificationRequested
             | VerificationFailed
             | VerificationSuccessful
             | VerificationExpired
@@ -41,16 +41,24 @@ module User =
         let sendToSagaStarter =
             SagaStarter.toSendMessage mediatorS mailbox.Self
 
+        let apply event state version =
+            match event, state with
+                    | RegistrationRequested(user, vCode), _ ->
+                        ({ User = user; Verification = NotVerified vCode} |> Some, version)
+                    | VerificationExpired, _
+                    | VerificationSuccessful , _ -> (None, version)
+                    | _ -> state
+
         let rec set (state: State option * int64) =
             actor {
                 let! msg = mailbox.Receive()
                 Log.Debug("Message {@MSG}", box msg)
 
                 match msg, state with
-                | Recovering mailbox (Event { Event = RegistrationRequested(user, vCode); Version = version }), _ ->
-                    return! ({ User = user; Verification = NotVerified vCode} |> Some, version) |> set
-                | Recovering mailbox (Event { Event = VerificationExpired; Version = version }), _ ->
-                    return! (None, version) |> set
+                | Recovering mailbox (Event { Event = RegistrationRequested(_) as e; Version = version }), _
+                | Recovering mailbox (Event { Event = VerificationSuccessful as e; Version = version }), _
+                | Recovering mailbox (Event { Event = VerificationExpired as e; Version = version }), _  ->
+                    return! (apply e state version)|> set
 
                 | Command { Command = (Register user); CorrelationId = ci }, (Some { Verification = NotVerified _ }, v)
                 | Command { Command = (Register user); CorrelationId = ci }, (None, v) ->
@@ -58,7 +66,7 @@ module User =
                     let e =
                         ({ user with Version = Version v}, (VerificationCode 334)) |> RegistrationRequested
 
-                    let event = toEvent ci (e) v
+                    let event = toEvent ci e v
                     sendToSagaStarter event ci
                     return! event |> Event |> Persist
 
@@ -69,7 +77,7 @@ module User =
                             else
                                 VerificationSuccessful
 
-                    let event = toEvent ci (e) v
+                    let event = toEvent ci e (v + 1L)
                     sendToSagaStarter event ci
                     return! event |> Event |> Persist
 
@@ -84,25 +92,16 @@ module User =
                     return! event |> Event |> Persist
 
                 | Command { Command = (WaitForVerification); CorrelationId = ci }, (Some { Verification = NotVerified _ }, v)->
-                    let event = toEvent ci VerificationEmailSent v
+                    let event = toEvent ci VerificationRequested v
                     SagaStarter.publishEvent mailbox mediator (event)
                     return! set state
 
-                | Persisted mailbox (Event ({ Event = RegistrationRequested(user, vCode); Version = v } as e)), _ ->
-                    SagaStarter.publishEvent mailbox mediator e
-                    return! (Some {User = user; Verification = NotVerified vCode}, v) |> set
-
-                | Persisted mailbox (Event ({ Event = VerificationExpired; Version = v } as e)), _ ->
-                    SagaStarter.publishEvent mailbox mediator e
-                    return! (None, v) |> set
-
-                | Persisted mailbox (Event ({ Event = VerificationFailed} as e)), _ ->
-                    SagaStarter.publishEvent mailbox mediator e
-                    return! state |> set
-
-                | Persisted mailbox (Event ({ Event = VerificationSuccessful} as e)), (Some s, v) ->
-                    SagaStarter.publishEvent mailbox mediator e
-                    return! (Some {User = s.User; Verification = Verified }, v) |> set
+                | Persisted mailbox (Event ({ Event = RegistrationRequested(_) as e; Version = version } as event)), _
+                | Persisted mailbox (Event ({ Event = VerificationExpired as e; Version = version } as event)), _
+                | Persisted mailbox (Event ({ Event = VerificationFailed as e ; Version = version } as event) ), _
+                | Persisted mailbox (Event ({ Event = VerificationSuccessful as e; Version = version} as event)), _ ->
+                    SagaStarter.publishEvent mailbox mediator event
+                    return! (apply e state version)|> set
 
                 | _ -> return Unhandled
             }

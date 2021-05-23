@@ -35,7 +35,7 @@ type IDomain =
     abstract UserFactory: string -> IEntityRef<Message<User.Command, User.Event>>
 
 
-let api (clock: IClock) (actorApi: IActor) =
+let api (clock: IClock) (actorApi: IActor) sendEmail =
 
     let toEvent ci = Common.toEvent clock ci
     SagaStarter.init actorApi.System actorApi.Mediator (sagaCheck toEvent actorApi clock)
@@ -48,7 +48,7 @@ let api (clock: IClock) (actorApi: IActor) =
     |> sprintf "UserRegistrationSaga initialized %A"
     |> Log.Debug
 
-    EmailService.init actorApi.System actorApi.Mediator
+    EmailService.init actorApi.System actorApi.Mediator sendEmail
     System.Threading.Thread.Sleep(1000)
 
     { new IDomain with

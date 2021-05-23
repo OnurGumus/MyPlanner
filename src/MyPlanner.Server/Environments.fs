@@ -8,7 +8,7 @@ open Command
 type AppEnv(config: IConfiguration) =
 
     let commandApi =
-        MyPlanner.Command.API.api config NodaTime.SystemClock.Instance
+        MyPlanner.Command.API.api config NodaTime.SystemClock.Instance (fun _ _ -> async {return ()})
 
     let queryApi =
         MyPlanner.Query.API.api config commandApi.ActorApi

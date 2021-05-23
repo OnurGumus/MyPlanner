@@ -35,13 +35,13 @@ let registerUser (domainApi: IDomain) : RegisterUser =
                         EntityRef = taskActor
                         Filter =
                             (function
-                            | VerificationEmailSent  -> true | _ -> false)
+                            | VerificationRequested  -> true | _ -> false)
                     }
                     |> Execute
 
                 match! (domainApi.ActorApi.SubscribeForCommand c) with
                 | {
-                      Event = (VerificationEmailSent)
+                      Event = (VerificationRequested)
                   } -> return Ok ()
 
                 | _ -> return failwith "not supported"
@@ -53,9 +53,9 @@ type IAPI =
     abstract ActorApi : IActor
 
 
-let api config (clock: IClock) =
+let api config (clock: IClock) sendMail =
     let actorApi = Actor.api config
-    let domainApi = Domain.Api.api clock actorApi
+    let domainApi = Domain.Api.api clock actorApi sendMail
 
     { new IAPI with
         member _.ActorApi = actorApi
