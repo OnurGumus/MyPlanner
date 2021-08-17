@@ -67,7 +67,9 @@ module User =
                         ({ user with Version = Version v}, (VerificationCode 334)) |> RegistrationRequested
 
                     let event = toEvent ci e v
-                    sendToSagaStarter event ci
+                    match state with
+                    | None,_ -> sendToSagaStarter event ci
+                    | _ -> ()
                     return! event |> Event |> Persist
 
                 | Command { Command = (Verify userVCode); CorrelationId = ci }, (Some { Verification = NotVerified vCode }, v)->
